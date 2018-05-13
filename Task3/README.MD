@@ -27,8 +27,12 @@ sudo xfsrestore -f /tmp/rootdump /mnt/
 sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 ````
 
-После этого, подправил _/boot/grub2/grub.cfg_. Для того что бы грузиться по умолчанию с _/dev/mapper/vg0-roottemp_
-Изменил в строчке, **linux16 /vmlinuz-3.10.0-693.21.1.el7.x86_64 _root=/dev/mapper/vg0-roottemp_ ro no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0 crashkernel=auto _rd.lvm.lv=vg0/roottemp_ rd.lvm.lv=VolGroup00/LogVol01 rhgb quiet**
+После этого, подправил _/boot/grub2/grub.cfg_.
+Для того что бы грузиться по умолчанию с _/dev/mapper/vg0-roottemp_
+Изменил в строчке,
+```
+linux16 /vmlinuz-3.10.0-693.21.1.el7.x86_64 **root=/dev/mapper/vg0-roottemp** ro no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0 crashkernel=auto __rd.lvm.lv=vg0/roottemp__ rd.lvm.lv=VolGroup00/LogVol01 rhgb quiet
+```
 
 
 2) выделить том под /home
