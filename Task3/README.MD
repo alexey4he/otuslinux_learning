@@ -93,10 +93,21 @@ sudo mkfs.xfs /dev/VolGroup00/LogVol_root
 sudo mkfs.ext4 /dev/VolGroup00/LogVol_home
 ''''
 Создали, отфомотировали.
+Пора перенести root, на новый раздел
 
-Для **var** необходимо собрать раздел с опцией **mirror**.  
-Т.к. в самом начале я забыл про это, придется освободить из VolumeGroup 2 диска.
-Ну что же, попробуем:
+Для того что бы загрузиться с LogVol_root, опять правим **grub.cfg** и **fstab**.
+ 
+Правим __*/dev/mapper/vg0-root_temp*__ на __*/dev/mapper/VolumeGroup00-LogVol_root*__.
+А __*rd.lvm.lv=vg0/root_temp*__ на __*/dev/VolumeGroup00/LogVol_root*__.
+
+и **fstab**:
+
+_/dev/mapper/Volume_G       /                       xfs     defaults        0 0_ монтируем **временный root**
+
+~~#/dev/mapper/VolGroup00-LogVol00 /                       xfs     defaults        0 0_~~ удаляем запись о старом. 
+
+
+
 ''''
 
 ''''
