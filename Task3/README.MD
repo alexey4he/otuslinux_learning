@@ -42,11 +42,64 @@ sudo xfsrestore -f /tmp/rootdump /mnt/
 Необходимо в __/boot/grub2/grub.cfg__ изменить путь до  __root__ раздела. 
 Ищем __*/dev/mapper/VolGroup00-LogVol00*__ и заменяем на __*/dev/mapper/vg0-root_temp*__.
 А __*rd.lvm.lv=VolGroup00/LogVol00*__ на __*rd.lvm.lv=vg0/root_temp*__.
-После чего перезагружаемся.
+
+Так же решил поправить __fstab__, на временом разделе. Без него система тоже грузится, но думаю что это не будет лишним.
+т.к. _временный **root**_ пока примонтирован в **/mnt/**, то и **fstab** надо править там. 
 
 
-После этого, подправил _/boot/grub2/grub.cfg_.
-Для того что бы грузиться по умолчанию с __/dev/mapper/vg0-roottemp__
+````
+sudo vi /mnt/etc/fstab
+````
+_/dev/mapper/vg0-root_temp       /                       xfs     defaults        0 0_ монтируем **временный root**
+
+~~#/dev/mapper/VolGroup00-LogVol00 /                       xfs     defaults        0 0_~~ удаляем запись о старом. 
+
+
+После чего **перезагружаемся.**
+
+После перезагрузки, подключаемся к системе и проверяем куда примонтирован **root** раздел.
+
+''''
+[vagrant@otuslinux ~]$ sudo lsblk 
+NAME                    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                       8:0    0   40G  0 disk 
+├─sda1                    8:1    0    1M  0 part 
+├─sda2                    8:2    0    1G  0 part 
+└─sda3                    8:3    0   39G  0 part 
+  ├─VolGroup00-LogVol01 253:1    0  1.5G  0 lvm  [SWAP]
+  └─VolGroup00-LogVol00 253:2    0 37.5G  0 lvm  
+sdb                       8:16   0  250M  0 disk 
+└─vg0-root_temp         253:0    0  4.1G  0 lvm  /
+sdc                       8:32   0  2.5G  0 disk 
+└─vg0-root_temp         253:0    0  4.1G  0 lvm  /
+sdd                       8:48   0  1.5G  0 disk 
+└─vg0-root_temp         253:0    0  4.1G  0 lvm  /
+
+''''
+
+**root**, у нас на **vg-root_temp**. Отлично!
+Теперь можем удалить старый LG на котором находился *старый **root***
+
+''''
+sudo lvremove /dev/VolGroup00/LogVol00
+''''
+Раздел удалили. Теперь можно сразу создать раздел для **root** и для **home**.
+
+''''
+sudo lvcreate -L 8G -n LogVol_root VolGroup00
+sudo lvcreate -L 8G -n LogVol_home VolGroup00 
+
+sudo mkfs.xfs /dev/VolGroup00/LogVol_root
+sudo mkfs.ext4 /dev/VolGroup00/LogVol_home
+''''
+Создали, отфомотировали.
+
+Для **var** необходимо собрать раздел с опцией **mirror**.  
+Т.к. в самом начале я забыл про это, придется освободить из VolumeGroup 2 диска.
+Ну что же, попробуем:
+''''
+
+''''
 
 _______________
 
@@ -59,13 +112,6 @@ crashkernel=auto __rd.lvm.lv=vg0/roottemp__ rd.lvm.lv=VolGroup00/LogVol01 rhgb q
 Так же решил поправить __fstab__, на временом разделе. Без него система тоже грузится, но думаю что это будет не лишним.
 т.к. _временный **root**_ пока примонтирован в **/mnt/**, то и **fstab** надо править там. 
 
-````
-sudo vi /mnt/etc/fstab
-````
-_/dev/mapper/vg0-root_temp       /                       xfs     defaults        0 0_ монтируем **временный root**
-
-~~#/dev/mapper/VolGroup00-LogVol00 /                       xfs     defaults        0 0_~~ удаляем запись о старом. 
-_______________
 
 После перезагрузки, смотрим где размещается __/__
 ````
