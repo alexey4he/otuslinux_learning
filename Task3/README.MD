@@ -1,27 +1,49 @@
 Домашнее задание №3:
 ========================
-Работа с LVM
+Тема: Работа с LVM
 -------------------------
 
-**_на имеющемся образе /dev/mapper/VolGroup00-LogVol00 38G 738M 37G 2% /_**
+### Задача:
+
+_на имеющемся образе /dev/mapper/VolGroup00-LogVol00 38G 738M 37G 2% /_
+
+#### 1)Уменьшить том под / до 8G
+#### 2)выделить том под /home
+#### 3)выделить том под /var
+#### 4)/var - сделать в mirror
+#### 5)/home - сделать том для снэпшотов
+#### 6)прописать монтирование в fstab
+#### 7)попробовать с разными опциями и разными файловыми системами ( на выбор)
+#####     - сгенерить файлы в /home/
+#####     - снять снэпшот
+#####     - удалить часть файлов
+#####     - восстановится со снэпшота
+#####     - залоггировать работу можно с помощью утилиты screen
 
 
-#### 1) уменьшить том под / до 8G:
-___
+## Решение:
+_________________
 
-```bash
+
+Я решил попробывать изменить __/__ без LiveCd. Для начала мне надо из свободных дисков собрать Volume Group и перенести туда __/__. 
+
+````bash
 sudo pvcreate /dev/sd{b,c,d}
 sudo vgcreate vg0 /dev/sdc /dev/sdb /dev/sdd
-sudo lvcreate -l 100%FREE -n roottemp vg0
-sudo vgscan
-sudo vgchange -ay
-sudo mkfs.xfs /dev/vg0/roottemp
-sudo mount /dev/mapper/vg0-roottemp /mnt/
-sudo dnf install xfsdump
+sudo lvcreate -l 100%FREE -n root_temp vg0
+sudo vgscan && sudo vgchange -ay
+sudo mkfs.xfs /dev/vg0/root_temp
+sudo mount /dev/mapper/vg0-root_temp /mnt/
+sudo yum install xfsdump -y
 sudo xfsdump -f /tmp/rootdump /dev/mapper/VolGroup00-LogVol00
 sudo xfsrestore -f /tmp/rootdump /mnt/
-sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 ````
+Раздел создан, теперь с него необходимо загрузиться. 
+Необходимо в __/boot/grub2/grub.cfg__ изменить путь до  __root__ раздела. 
+Ищем __*/dev/mapper/VolGroup00-LogVol00*__ и заменяем на __*/dev/mapper/vg0-root_temp*__.
+А __*rd.lvm.lv=VolGroup00/LogVol00*__ на __*rd.lvm.lv=vg0/root_temp*__.
+После чего перезагружаемся.
+
 
 После этого, подправил _/boot/grub2/grub.cfg_.
 Для того что бы грузиться по умолчанию с __/dev/mapper/vg0-roottemp__
@@ -34,6 +56,15 @@ no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0
 crashkernel=auto __rd.lvm.lv=vg0/roottemp__ rd.lvm.lv=VolGroup00/LogVol01 rhgb quiet
 ...
 
+Так же решил поправить __fstab__, на временом разделе. Без него система тоже грузится, но думаю что это будет не лишним.
+т.к. _временный **root**_ пока примонтирован в **/mnt/**, то и **fstab** надо править там. 
+
+````
+sudo vi /mnt/etc/fstab
+````
+_/dev/mapper/vg0-root_temp       /                       xfs     defaults        0 0_ монтируем **временный root**
+
+~~#/dev/mapper/VolGroup00-LogVol00 /                       xfs     defaults        0 0_~~ удаляем запись о старом. 
 _______________
 
 После перезагрузки, смотрим где размещается __/__
@@ -93,7 +124,7 @@ sda                       8:0    0   40G  0 disk
 ````
 Задание __выполнено__.
 
-2) выделить том под /home
+#### 2) выделить том под /home
 ````
 sudo lvcreate -L 8G -n home VolGroup00
 sudo mkdir /tmp/home
@@ -104,19 +135,24 @@ sudp cp -ra /tmp/home/* /home/
 ````
 Задание __выполнено__.
 
-3) выделить том под /var
+#### 3 + 4)  выделить том под /var + /var - сделать в mirror
 ````
-sudo lvcreate -L 8G -n var VolGroup00
-sudo mkfs.ext4 /dev/mapper/VolGroup00-var
-sudo mkdir  /tmp/var
-sudo cp -ra /var/* /tmp/var/
-sudo mount /dev/mapper/VolGroup00-var /var
-udo cp -ra /tmp/var/* /var/
+sudo vgremove vg0
+
+
 ````
 
-4) /var - сделать в mirror
-5) /home - сделать том для снэпшотов
-Сгенировал, кучку файлов в __/home/vagrant__ с помощью скрипта.
+
+
+#### 6) прописать монтирование в fstab
+
+
+#### 5+7) /home - сделать том для снэпшотов попробовать с разными опциями и разными файловыми системами ( на выбор)
+    - сгенерить файлы в /home/
+    - снять снэпшот
+    - удалить часть файлов
+    - восстановится со снэпшота
+Сгенировал, несколько файлов в __/home/vagrant__ с помощью скрипта.
 ````
 #!/bin/bash
 for i in {1..20};
@@ -159,17 +195,3 @@ sudo lvconvert --merge /dev/VolGroup00/snap_home
 sudo mount /dev/VolGroup00/home /home
 ````
 Все, мы востоновились из снапшота. Задание __выполнено__.
-
-6) прописать монтирование в fstab
-
-
-7) попробовать с разными опциями и разными файловыми системами ( на выбор)
-    - сгенерить файлы в /home/
-    - снять снэпшот
-    - удалить часть файлов
-    - восстановится со снэпшота
-
-
-  Доп. задание:
-
-    -на нашей куче дисков попробовать поставить btrfs/zfs - с кешем, снэпшотами - разметить здесь каталог /opt. В настоящий момент не выполнено.
