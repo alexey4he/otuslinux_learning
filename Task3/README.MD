@@ -59,7 +59,7 @@ _/dev/mapper/vg0-root_temp       /                       xfs     defaults       
 
 После перезагрузки, подключаемся к системе и проверяем куда примонтирован **/root** раздел.
 
-''''
+````
 [vagrant@otuslinux ~]$ sudo lsblk
 NAME                    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
 sda                       8:0    0   40G  0 disk
@@ -73,58 +73,58 @@ sdc                       8:32   0  2.5G  0 disk
 └─vg0-root_temp         253:0    0  2.4G  0 lvm  /
 sdd                       8:48   0  1.5G  0 disk
 
-''''
+````
 
 **/root**, у нас на **vg-root_temp**. Отлично!
 Теперь можем удалить старый LG на котором находился *старый **/root***
 
-''''
+````
 sudo lvremove /dev/VolGroup00/LogVol00
-''''
+````
 Раздел удалили. Теперь можно сразу создать раздел для **/root** и для **/home** на **sda3**.
 
-''''
+````
 sudo lvcreate -L 8G -n LogVol_root VolGroup00
 sudo lvcreate -L 8G -n LogVol_home VolGroup00 
 
 sudo mkfs.xfs /dev/VolGroup00/LogVol_root
 sudo mkfs.ext4 /dev/VolGroup00/LogVol_home
-''''
+````
 Создали, отфомотировали.
 Пора перенести **/root**, на новый раздел:
 
-''''
+````
 sudo xfsdump -f /tmp/rootdump /dev/mapper/vg0-root_temp
 sudo mount /dev/mapper/VolGroup00-LogVol_root /mnt/
 sudo xfsrestore -f /tmp/rootdump /mnt/
-''''
+````
 **/root** готов. 
 
 Прежде чем грузиться с нового раздела, я решил сразу подготовить разделы для **/home** и  **/var**.
 Начнем с **/home**:
 
-''''
+````
 sudo mount /dev/mapper/VolGroup00-LogVol_home /mnt/
 sudo cp -ra /home/* /mnt/
-''''
+````
 Данные перенесли, раздел готов к монтированию.
 
 Осталось разобраться с **/var** в **mirror**. Мы специально оставили 2 диска, не тронутыми. Приступаем к ним.
-''''
+````
 sudo pvcreate /dev/sd{b,d}
 sudo vgcreate vg1 /dev/sdb /dev/sdd
 sudo lvcreate -L 240M -m1 -n LogVol_var vg1
 sudo mkfs.ext4 /dev/mapper/vg1-LogVol_var
 sudo mount /dev/mapper/vg1-LogVol_var /mnt/
 sudo cp -ra /var/* /mnt/
-''''
+````
 
 Все готово, осталось указать в **fstab** на новом томе куда, что монтировать:
 
-''''
+````
 sudo mount /dev/mapper/VolGroup00-LogVol_root /mnt/
 sudo vi /mnt/etc/fstab
-''''
+````
 
 _/dev/mapper/VolGroup00-LogVol_root       /                       xfs     defaults        0 0_ монтируем **/root** размером 8Gb
 _/dev/mapper/VolGroup00-LogVol_home       /home                     ex4     defaults        0 0_ монтируем **/home** 
@@ -142,7 +142,7 @@ _/dev/mapper/vg1-LogVol_var      /var                      ext4     defaults    
 _______________
 
 После перезагрузки, гляним как примонтированы тома.
-''''
+````
 sudo lsblk
 NAME                       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
 sda                          8:0    0   40G  0 disk
@@ -164,8 +164,7 @@ sdd                          8:48   0  1.5G  0 disk
 │ └─vg1-LogVol_var         253:8    0  240M  0 lvm  /var
 └─vg1-LogVol_var_rimage_1  253:7    0  240M  0 lvm
   └─vg1-LogVol_var         253:8    0  240M  0 lvm  /var
-
-''''
+````
 Отлично! Все правильно. 
 Осталось создать несколько файлов в **home** и попробывать создать **snapshot**.
 С помощью скрипта **fgen.sh**:
