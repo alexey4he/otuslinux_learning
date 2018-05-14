@@ -52,7 +52,7 @@ sudo vi /mnt/etc/fstab
 ````
 _/dev/mapper/vg0-root_temp       /                       xfs     defaults        0 0_ монтируем **временный /root**
 
-~~#/dev/mapper/VolGroup00-LogVol00 /                       xfs     defaults        0 0_~~ удаляем запись о старом. 
+~~#/dev/mapper/VolGroup00-LogVol00 /                       xfs     defaults        0 0~~ удаляем запись о старом. 
 
 
 После чего **перезагружаемся.**
@@ -76,12 +76,11 @@ sdd                       8:48   0  1.5G  0 disk
 ````
 
 **/root**, у нас на **vg-root_temp**. Отлично!
-Теперь можем удалить старый LG на котором находился *старый **/root***
-
+Теперь можем удалить старый LV __LogVol01__ на котором находился  **/root**
 ````
 sudo lvremove /dev/VolGroup00/LogVol00
 ````
-Раздел удалили. Теперь можно сразу создать раздел для **/root** и для **/home** на **sda3**.
+Раздел удалили. Теперь на его местте создадим раздел для **/root** и для **/home**.
 
 ````
 sudo lvcreate -L 8G -n LogVol_root VolGroup00
