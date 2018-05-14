@@ -127,9 +127,12 @@ sudo vi /mnt/etc/fstab
 ````
 
 _/dev/mapper/VolGroup00-LogVol_root       /                       xfs     defaults        0 0_ монтируем **/root** размером 8Gb
+
 _/dev/mapper/VolGroup00-LogVol_home       /home                     ex4     defaults        0 0_ монтируем **/home** 
+
 _/dev/mapper/vg1-LogVol_var      /var                      ext4     defaults        0 0_ монтируем **/var** в **mirror**
-~~/dev/mapper/vg0-root_temp       /                       xfs     defaults        0 0_ монтируем~~**временный /root** нам больше не нужен
+
+~~/dev/mapper/vg0-root_temp       /                       xfs     defaults        0 0_ монтируем~~ **временный /root** нам больше не нужен
 
 
 Оставлось исправить **grub.cfg**
