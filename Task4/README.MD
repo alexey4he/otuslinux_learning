@@ -9,7 +9,7 @@
 **3.** Добавить модуль в initrd
 ______________________________________________________________________________________________________________________
 Начал с **2** пункта. Установил Centos 7-1708. 
-И переименовал VG, с **cento** в **CentosForOtus**.
+И переименовал VG, с **centos** в **CentosForOtus**.
 ````
 [alexey4he@centoslvm ~]cat /etc/system-release
 CentOS Linux release 7.4.1708 (Core)
@@ -52,7 +52,11 @@ UUID=ddb636bb-c4b4-462a-b564-d1332cd0b760 /boot                   ext4    defaul
 ````
 GRUB_CMDLINE_LINUX="crashkernel=auto rd.lvm.lv=CentosForOtus/root rd.lvm.lv=CentosForOtus/swap"
 ````
-
+попробывал сгенерировать конфиг файл **/boot/grub2/grub.cfg** и получил следующее:
+````
+[alexey4he@localhost ~]$ sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+/usr/sbin/grub2-probe: error: failed to get canonical path of ‘/dev/mapper/centos-root’.
+````
 
 ___________________________________________________________________
 
