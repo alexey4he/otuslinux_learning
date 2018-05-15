@@ -57,6 +57,25 @@ GRUB_CMDLINE_LINUX="crashkernel=auto rd.lvm.lv=CentosForOtus/root rd.lvm.lv=Cent
 [alexey4he@localhost ~]$ sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 /usr/sbin/grub2-probe: error: failed to get canonical path of ‘/dev/mapper/centos-root’.
 ````
+Оказалось что не все так просто с **grub2-mkconfig**. 
+Что бы сгенерировать конфиг пришлось, добавить **2** дополнительные строчки в  **/etc/default/grub** 
+````
+GrUB_DEVICE=/dev/CentosForOtus/root
+GRUB_DEVICE_UUID=ed57b85f-befb-40a8-a658-f11839393057
+````
+и еще поправить сам **grub2-mkconfig**, звучит *ужасно*. Но это работает. 
+
+**sudo vi /usr/sbin/grub2-mkconfig**
+И в самом файле ищем строчку 
+````
+GRUB_DEVICE="`${grub_probe} --target=device /`"
+````
+И приводим ее к виду:
+````
+GRUB_DEVICE="`${grub_probe} --target=device /`" || true
+````
+Все, после этого **grub2-mkconfig -o /boot/grub2/grub.cfg** сгенерирует новый конфиг файл и можем перезагружаться.
+
 
 ___________________________________________________________________
 
