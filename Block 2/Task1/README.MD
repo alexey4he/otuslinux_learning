@@ -5,7 +5,7 @@
 Vagrantfile - для стенда урока 9 - Network
 
 # Дано
-https://github.com/erlong15/otus-linux/tree/network<img src="resources/image.png" width="200" height="50"/>
+https://github.com/erlong15/otus-linux/tree/network
 
 (ветка network)
 
