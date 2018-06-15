@@ -3,6 +3,7 @@
 <details>
 <summary> Дано </summary> 
 <img src="Image/Block2Task2.jpg" />
+
 строим бонды и вланы
 в Office1 в тестовой подсети появляется сервера с доп интерфесами и адресами
 во internal сети testLAN
