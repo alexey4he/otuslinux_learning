@@ -1,10 +1,10 @@
 Домашнее задание
 разворачиваем сетевую лабораторию
-
-# otus-linux
-Vagrantfile - для стенда урока 9 - Network
 <details>
 <summary> Дано </summary> 
+  
+# otus-linux
+Vagrantfile - для стенда урока 9 - Network
 https://github.com/erlong15/otus-linux/tree/network
 
 (ветка network)
