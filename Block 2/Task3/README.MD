@@ -21,10 +21,8 @@
 ______________________________________________________
 # Выполнение
 
-####<img src="Image/Block2Task3.jpg" />
-
-1. Создал 2 группы серверов Group1(**group1Client1 and group1Client2**) 
-   и Group2(**group2Client1 and group2Client2**).
+1. Создал 2 группы серверов Group1(**group1Client1; group1Client2**) 
+   и Group2(**group2Client1; group2Client2**).
 
 ______________________________
 
