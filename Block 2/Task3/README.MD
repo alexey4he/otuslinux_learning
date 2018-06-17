@@ -1,9 +1,9 @@
 Домашнее задание
 
-#VPN
+# VPN
 
 <details>
-<summary> Дано </summary> 
+<summary> Задачи: </summary> 
 
 
 1. Между двумя виртуалками поднять vpn в режимах
@@ -21,12 +21,16 @@
 ______________________________________________________
 # Выполнение
 
-####<img src="Image/Block2Task2.jpg" />
+####<img src="Image/Block2Task3.jpg" />
 
-1. Создал 2 группы серверов Group1(**group1Client1 and group1Client2**) и Group2(**group2Client1 and group2Client2**).
+1. Создал 2 группы серверов Group1(**group1Client1 and group1Client2**) 
+   и Group2(**group2Client1 and group2Client2**).
 
-- На Group1 поднимем tun ipip. 
--- На сервере **group1Client1** создадим интерфейс с помощью **nmcli**:
+______________________________
+
+- На **Group1** поднимем **tun ipip**. 
+
+* На сервере **group1Client1** создадим интерфейс с помощью **nmcli**:
 `````
 nmcli connection add \
     type ip-tunnel ifname tun0 mode ipip \
@@ -34,4 +38,4 @@ nmcli connection add \
     -- ipv4.method manual ipv4.addresses 192.168.140.2 \
     ipv4.routes "192.168.140.1/24" ip-tunnel.mtu 1500 ip-tunnel.ttl 255
 `````
--- На сервере **group1Client2** создадим интерфейс с помощью **iproute2**:
+* На сервере **group1Client2** создадим интерфейс с помощью **iproute2**:
