@@ -4,25 +4,25 @@
 # vim: set ft=ruby :
 
 MACHINES = {
-:group1Client1 => {
+:tunClient1 => {
     :box_name => "centos/7",
     :net => [
                {ip: '10.10.140.1', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "ts-net"},
             ]
 },
-:group1Client2 => {
+:tunClient2 => {
     :box_name => "centos/7",
     :net => [
                {ip: '10.10.140.2', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "ts-net"},
             ]
   },
-:group2Cleint1 => {
+:tapClient1 => {
     :box_name => "centos/7",
     :net => [
                {ip: '10.10.150.1', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "ts-net"},
             ]
 },
-:grpoup2Client2 => {
+:tapClient2 => {
     :box_name => "centos/7",
     :net => [
                {ip: '10.10.150.2', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "ts-net"},
@@ -53,17 +53,31 @@ Vagrant.configure("2") do |config|
         SHELL
         
         case boxname.to_s
-        when "grpoup1Client1"
+        when "tunClient1"
           box.vm.provision "shell", run: "always", inline: <<-SHELL
+          nmcli connection add \
+                type ip-tunnel ifname tun0 mode ipip \
+                remote 10.10.140.2 local 10.10.140.1 dev eth1 \
+                -- ipv4.method manual ipv4.addresses 192.168.140.1 \
+                ipv4.routes "192.168.140.1/24" ip-tunnel.mtu 1500 ip-tunnel.ttl 255
           SHELL
-        when "grpoup1Client2"
+        when "tunClient2"
           box.vm.provision "shell", run: "always", inline: <<-SHELL
+          ip tunnel add tun0 mode ipip remote 10.10.140.1 local 10.10.140.2 dev eth1 ttl 255
+          ip address add 192.168.140.2 peer 192.168.140.1/32 dev tun0
+          ip link set tun0 mtu 1500 up
           SHELL
-        when "grpoup2Client1"
+        when "tapClient1"
           box.vm.provision "shell", run: "always", inline: <<-SHELL
+          ip link add tap1 type gretap local 10.10.150.1 remote 10.10.150.2 dev eth1
+          ip address add 192.168.0.1/30 dev tap1
+          ip link set tap1 up
           SHELL
-        when "grpoup2Client2"
+        when "tapClient2"
           box.vm.provision "shell", run: "always", inline: <<-SHELL
+          ip link add tap1 type gretap local 10.10.150.2 remote 10.10.150.1 dev eth1
+          ip address add 192.168.0.2/30 dev tap1
+          ip link set tap1 up
           SHELL
         end 
 
