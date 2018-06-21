@@ -23,8 +23,8 @@ ______________________________________________________
 
 1.  
 
-Создал 2 группы серверов Group1(**group1Client1; group1Client2**)
-и Group2(**group2Client1; group2Client2**).
+Создал 2 группы серверов tun(**tunClient1; tunClient2**)
+и Group2(**tapClient1; tapClient2**).
 
 ______________________________
 
