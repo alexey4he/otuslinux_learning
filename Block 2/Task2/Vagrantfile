@@ -94,6 +94,11 @@ Vagrant.configure("2") do |config|
           echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
           echo "GATEWAY=192.168.2.65" >> /etc/sysconfig/network-scripts/ifcfg-eth1
           echo "ONBOOT=yes\nTYPE=VLAN\nVLAN=yes\nVLAN_NAME_TYPE=VLAN_PLUS_VID_NO_PAD\nDEVICE=vlan2\nPHYSDEV=eth1\nVLAN_ID=2\nBOOTPROTO=static\nIPADDR=10.10.10.254\nNETMASK=255.255.255.0" >> /etc/sysconfig/network-scripts/ifcfg-vlan2
+          cp /vagrant/ssh/server1 /home/vagrant/.ssh/id_rsa
+          chown vagrant:vagrant /home/vagrant/.ssh/id_rsa
+          cat /vagrant/ssh/server1.pub >> /home/vagrant/.ssh/authorized_keys
+          sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+          service sshd restart
           systemctl restart network
           SHELL
         when "testClient2"
@@ -101,6 +106,11 @@ Vagrant.configure("2") do |config|
           echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
           echo "GATEWAY=192.168.2.65" >> /etc/sysconfig/network-scripts/ifcfg-eth1
           nmcli connection add type vlan ifname vlan3 dev eth1 id 3 ip4 10.10.10.1/24
+          cp /vagrant/ssh/server2 /home/vagrant/.ssh/id_rsa
+          chown vagrant:vagrant /home/vagrant/.ssh/id_rsa
+          cat /vagrant/ssh/server2.pub >> /home/vagrant/.ssh/authorized_keys
+          sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+          service sshd restart
           systemctl restart network
           SHELL
         when "testServer1"
@@ -108,6 +118,11 @@ Vagrant.configure("2") do |config|
           echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
           echo "GATEWAY=192.168.2.65" >> /etc/sysconfig/network-scripts/ifcfg-eth1
           echo "ONBOOT=yes\nTYPE=VLAN\nVLAN=yes\nVLAN_NAME_TYPE=VLAN_PLUS_VID_NO_PAD\nDEVICE=vlan2\nPHYSDEV=eth1\nVLAN_ID=2\nBOOTPROTO=static\nIPADDR=10.10.10.1\nNETMASK=255.255.255.0" >> /etc/sysconfig/network-scripts/ifcfg-vlan2
+          cp /vagrant/ssh/server1 /home/vagrant/.ssh/id_rsa
+          chown vagrant:vagrant /home/vagrant/.ssh/id_rsa
+          cat /vagrant/ssh/server1.pub >> /home/vagrant/.ssh/authorized_keys
+          sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+          service sshd restart
           systemctl restart network
           SHELL
         when "testServer2"
@@ -115,6 +130,11 @@ Vagrant.configure("2") do |config|
           echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
           echo "GATEWAY=192.168.2.65" >> /etc/sysconfig/network-scripts/ifcfg-eth1
           nmcli connection add type vlan ifname vlan3 dev eth1 id 3 ip4 10.10.10.254/24
+          cp /vagrant/ssh/server2 /home/vagrant/.ssh/
+          chown vagrant:vagrant /home/vagrant/.ssh/id_rsa
+          cat /vagrant/ssh/server2.pub >> /home/vagrant/.ssh/authorized_keys
+          sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+          service sshd restart
           systemctl restart network
           SHELL
         when "inetRouter"
