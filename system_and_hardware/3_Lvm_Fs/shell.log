@@ -1,0 +1,1094 @@
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo pvcreate /dev/sdc
+  Physical volume "/dev/sdc" successfully created.
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo vgcreate vg0 /dev/sdc
+  Volume group "vg0" successfully created
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo lvcreate -l 100%FREE -n root_temp vg0
+  Logical volume "root_temp" created.
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo vgscan && sudo vgchange -ay
+  Reading volume groups from cache.
+  Found volume group "VolGroup00" using metadata type lvm2
+  Found volume group "vg0" using metadata type lvm2
+  2 logical volume(s) in volume group "VolGroup00" now active
+  1 logical volume(s) in volume group "vg0" now active
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo mkfs.xfs /dev/vg0/root_temp
+meta-data=/dev/vg0/root_temp     isize=512    agcount=4, agsize=159744 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0, sparse=0
+data     =                       bsize=4096   blocks=638976, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal log           bsize=4096   blocks=2560, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo mount /dev/mapper/vg0-root_temp /mnt/
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo yum install xfsdump -y
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror.tversu.ru
+ * extras: mirror.corbina.net
+ * updates: mirror.corbina.net
+Resolving Dependencies
+--> Running transaction check
+---> Package xfsdump.x86_64 0:3.1.7-1.el7 will be installed
+--> Processing Dependency: attr >= 2.0.0 for package: xfsdump-3.1.7-1.el7.x86_64
+--> Running transaction check
+---> Package attr.x86_64 0:2.4.46-13.el7 will be installed
+--> Processing Dependency: libattr = 2.4.46-13.el7 for package: attr-2.4.46-13.el7.x86_64
+--> Running transaction check
+---> Package libattr.x86_64 0:2.4.46-12.el7 will be updated
+---> Package libattr.x86_64 0:2.4.46-13.el7 will be an update
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+========================================================================================================================
+ Package                    Arch                      Version                             Repository               Size
+========================================================================================================================
+Installing:
+ xfsdump                    x86_64                    3.1.7-1.el7                         base                    308 k
+Installing for dependencies:
+ attr                       x86_64                    2.4.46-13.el7                       base                     66 k
+Updating for dependencies:
+ libattr                    x86_64                    2.4.46-13.el7                       base                     18 k
+
+Transaction Summary
+========================================================================================================================
+Install  1 Package  (+1 Dependent package)
+Upgrade             ( 1 Dependent package)
+
+Total download size: 392 k
+Downloading packages:
+No Presto metadata available for base
+(1/3): attr-2.4.46-13.el7.x86_64.rpm                                                             |  66 kB  00:00:00
+(3/3): xfsdump-3.1.7-1.el7.x86_64.rpm         16% [=====-                             ]  0.0 B/s |  66 kB  --:--:-- ETA (2/3): libattr-2.4.46-13.el7.x86_64.rpm                                                          |  18 kB  00:00:00
+(3/3): xfsdump-3.1.7-1.el7.x86_64.rpm                                                            | 308 kB  00:00:00
+------------------------------------------------------------------------------------------------------------------------
+Total                                                                                   480 kB/s | 392 kB  00:00:00
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Updating   : libattr-2.4.46-13.el7.x86_64                                                                         1/4
+  Installing : attr-2.4.46-13.el7.x86_64                                                                            2/4
+  Installing : xfsdump-3.1.7-1.el7.x86_64                                                                           3/4
+  Cleanup    : libattr-2.4.46-12.el7.x86_64                                                                         4/4
+  Verifying  : attr-2.4.46-13.el7.x86_64                                                                            1/4
+  Verifying  : xfsdump-3.1.7-1.el7.x86_64                                                                           2/4
+  Verifying  : libattr-2.4.46-13.el7.x86_64                                                                         3/4
+  Verifying  : libattr-2.4.46-12.el7.x86_64                                                                         4/4
+
+Installed:
+  xfsdump.x86_64 0:3.1.7-1.el7
+
+Dependency Installed:
+  attr.x86_64 0:2.4.46-13.el7
+
+Dependency Updated:
+  libattr.x86_64 0:2.4.46-13.el7
+
+Complete!
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo xfsdump -f /tmp/rootdump /dev/mapper/VolGroup00-LogVol00
+xfsdump: using file dump (drive_simple) strategy
+xfsdump: version 3.1.7 (dump format 3.0) - type ^C for status and control
+
+ ============================= dump label dialog ==============================
+
+please enter label for this dump session (timeout in 300 sec)
+ -> full
+session label entered: "full"
+
+ --------------------------------- end dialog ---------------------------------
+
+xfsdump: level 0 dump of otuslinux:/
+xfsdump: dump date: Mon May 14 05:53:29 2018
+xfsdump: session id: 85c630cb-186a-4cd4-a1a7-d3da52f5ab4a
+xfsdump: session label: "full"
+xfsdump: ino map phase 1: constructing initial dump list
+xfsdump: ino map phase 2: skipping (no pruning necessary)
+xfsdump: ino map phase 3: skipping (only one dump stream)
+xfsdump: ino map construction complete
+xfsdump: estimated dump size: 684333312 bytes
+xfsdump: /var/lib/xfsdump/inventory created
+
+ ============================= media label dialog =============================
+
+please enter label for media in drive 0 (timeout in 300 sec)
+ -> 0
+media label entered: "0"
+
+ --------------------------------- end dialog ---------------------------------
+
+xfsdump: creating dump session media file 0 (media 0, file 0)
+xfsdump: dumping ino map
+xfsdump: dumping directories
+xfsdump: dumping non-directory files
+xfsdump: ending media file
+xfsdump: media file size 976191440 bytes
+xfsdump: dump size (non-dir files) : 963258208 bytes
+xfsdump: dump complete: 18 seconds elapsed
+xfsdump: Dump Summary:
+xfsdump:   stream 0 /tmp/rootdump OK (success)
+xfsdump: Dump Status: SUCCESS
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo xfsrestore -f /tmp/rootdump /mnt/
+xfsrestore: using file dump (drive_simple) strategy
+xfsrestore: version 3.1.7 (dump format 3.0) - type ^C for status and control
+xfsrestore: searching media for dump
+xfsrestore: examining media file 0
+xfsrestore: dump description:
+xfsrestore: hostname: otuslinux
+xfsrestore: mount point: /
+xfsrestore: volume: /dev/mapper/VolGroup00-LogVol00
+xfsrestore: session time: Mon May 14 05:53:29 2018
+xfsrestore: level: 0
+xfsrestore: session label: "full"
+xfsrestore: media label: "0"
+xfsrestore: file system id: fca2ab64-5588-4787-89bc-03642ce7ccca
+xfsrestore: session id: 85c630cb-186a-4cd4-a1a7-d3da52f5ab4a
+xfsrestore: media id: 66d409fd-9347-4aa0-8c23-520196e983f5
+xfsrestore: using online session inventory
+xfsrestore: searching media for directory dump
+xfsrestore: reading directories
+xfsrestore: 2650 directories and 23249 entries processed
+xfsrestore: directory post-processing
+xfsrestore: restoring non-directory files
+вxfsrestore: restore complete: 20 seconds elapsed
+xfsrestore: Restore Summary:
+xfsrestore:   stream 0 /tmp/rootdump OK (success)
+xfsrestore: Restore Status: SUCCESS
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo vi /mnt/etc/fstab
+
+
+#
+# /etc/fstab
+# Created by anaconda on Tue Apr  3 21:42:15 2018
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk'
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+#
+/dev/mapper/vg0-root_temp       /                       xfs     defaults        0 0
+#/dev/mapper/VolGroup00-LogVol00 /                       xfs     defaults        0 0
+UUID=a9953552-87ca-4e1c-972e-fb484ce749fe /boot                   xfs     defaults        0 0
+/dev/mapper/VolGroup00-LogVol01 swap                    swap    defaults        0 0
+:wq
+
+
+[vagrant@otuslinux ~]$ sudo vi /boot/grub2/grub.cfg
+
+#
+# DO NOT EDIT THIS FILE
+#
+# It is automatically generated by grub2-mkconfig using templates
+# from /etc/grub.d and settings from /etc/default/grub
+#
+
+### BEGIN /etc/grub.d/00_header ###
+set pager=1
+
+if [ -s $prefix/grubenv ]; then
+  load_env
+fi
+if [ "${next_entry}" ] ; then
+   set default="${next_entry}"
+   set next_entry=
+   save_env next_entry
+   set boot_once=true
+else
+   set default="${saved_entry}"
+fi
+
+if [ x"${feature_menuentry_id}" = xy ]; then
+  menuentry_id_option="--id"
+else
+  menuentry_id_option=""
+fi
+
+export menuentry_id_option
+
+if [ "${prev_saved_entry}" ]; then
+  set saved_entry="${prev_saved_entry}"
+  save_env saved_entry
+  set prev_saved_entry=
+  save_env prev_saved_entry
+  set boot_once=true
+fi
+
+    saved_entry="${chosen}"
+    save_env saved_entry
+  fi
+}
+
+function load_video {
+  if [ x$feature_all_video_module = xy ]; then
+    insmod all_video
+  else
+    insmod efi_gop
+    insmod efi_uga
+    insmod video_bochs
+    insmod video_cirrus
+
+terminal_output console
+if [ x$feature_timeout_style = xy ] ; then
+  set timeout_style=menu
+  set timeout=1
+# Fallback normal timeout code in case the timeout_style feature is
+# unavailable.
+else
+  set timeout=1
+fi
+### END /etc/grub.d/00_header ###
+
+### BEGIN /etc/grub.d/00_tuned ###
+set tuned_params=""
+set tuned_initrd=""
+### END /etc/grub.d/00_tuned ###
+
+### BEGIN /etc/grub.d/01_users ###
+if [ -f ${prefix}/user.cfg ]; then
+  source ${prefix}/user.cfg
+  if [ -n "${GRUB2_PASSWORD}" ]; then
+    set superusers="root"
+    export superusers
+    password_pbkdf2 root ${GRUB2_PASSWORD}
+  fi
+fi
+### END /etc/grub.d/01_users ###
+
+### BEGIN /etc/grub.d/10_linux ###
+menuentry 'CentOS Linux (3.10.0-693.21.1.el7.x86_64) 7 (Core)' --class centos --class gnu-linux --class gnu --class os -
+-unrestricted $menuentry_id_option 'gnulinux-3.10.0-693.21.1.el7.x86_64-advanced-fca2ab64-5588-4787-89bc-03642ce7ccca' {
+        load_video
+        set gfxpayload=keep
+        insmod gzio
+        insmod part_msdos
+        insmod xfs
+        set root='hd0,msdos2'
+        if [ x$feature_platform_search_hint = xy ]; then
+          search --no-floppy --fs-uuid --set=root --hint='hd0,msdos2'  a9953552-87ca-4e1c-972e-fb484ce749fe
+        else
+          search --no-floppy --fs-uuid --set=root a9953552-87ca-4e1c-972e-fb484ce749fe
+        fi
+        linux16 /vmlinuz-3.10.0-693.21.1.el7.x86_64 root=/dev/mapper/vg0-root_temp ro no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0 crashkernel=auto rd.lvm.lv=vg0/root_temp rd.lvm.lv=VolGroup00/LogVol01 rhgb quiet
+        initrd16 /initramfs-3.10.0-693.21.1.el7.x86_64.img
+}
+if [ "x$default" = 'CentOS Linux (3.10.0-693.21.1.el7.x86_64) 7 (Core)' ]; then default='Advanced options for CentOS Lin
+ux>CentOS Linux (3.10.0-693.21.1.el7.x86_64) 7 (Core)'; fi;
+:wq
+
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo lvremove /dev/VolGroup00/LogVol00
+Do you really want to remove active logical volume VolGroup00/LogVol00? [y/n]: y
+  Logical volume "LogVol00" successfully removed
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo lvcreate -L 8G -n LogVol_root VolGroup00
+WARNING: xfs signature detected on /dev/VolGroup00/LogVol_root at offset 0. Wipe it? [y/n]: y
+  Wiping xfs signature on /dev/VolGroup00/LogVol_root.
+  Logical volume "LogVol_root" created.
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo lvcreate -L 8G -n LogVol_home VolGroup00
+  Logical volume "LogVol_home" created.
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo mkfs.xfs /dev/VolGroup00/LogVol_root
+meta-data=/dev/VolGroup00/LogVol_root isize=512    agcount=4, agsize=524288 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0, sparse=0
+data     =                       bsize=4096   blocks=2097152, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal log           bsize=4096   blocks=2560, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo mkfs.ext4 /dev/VolGroup00/LogVol_home
+mke2fs 1.42.9 (28-Dec-2013)
+Filesystem label=
+OS type: Linux
+Block size=4096 (log=2)
+Fragment size=4096 (log=2)
+Stride=0 blocks, Stripe width=0 blocks
+524288 inodes, 2097152 blocks
+104857 blocks (5.00%) reserved for the super user
+First data block=0
+Maximum filesystem blocks=2147483648
+64 block groups
+32768 blocks per group, 32768 fragments per group
+8192 inodes per group
+Superblock backups stored on blocks:
+        32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (32768 blocks): done
+Writing superblocks and filesystem accounting information: done
+
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo xfsdump -f /tmp/rootdump /dev/mapper/vg0-root_temp
+xfsdump: using file dump (drive_simple) strategy
+xfsdump: version 3.1.7 (dump format 3.0) - type ^C for status and control
+
+ ============================= dump label dialog ==============================
+
+please enter label for this dump session (timeout in 300 sec)
+ -> full
+session label entered: "full"
+
+ --------------------------------- end dialog ---------------------------------
+
+xfsdump: level 0 dump of otuslinux:/
+xfsdump: dump date: Mon May 14 06:45:35 2018
+xfsdump: session id: 4113d6ee-60aa-41d7-879e-cf3de25e6de1
+xfsdump: session label: "full"
+xfsdump: ino map phase 1: constructing initial dump list
+xfsdump: ino map phase 2: skipping (no pruning necessary)
+xfsdump: ino map phase 3: skipping (only one dump stream)
+xfsdump: ino map construction complete
+xfsdump: estimated dump size: 682749760 bytes
+xfsdump: /var/lib/xfsdump/inventory created
+
+ ============================= media label dialog =============================
+
+please enter label for media in drive 0 (timeout in 300 sec)
+ -> 0
+media label entered: "0"
+
+ --------------------------------- end dialog ---------------------------------
+
+xfsdump: creating dump session media file 0 (media 0, file 0)
+xfsdump: dumping ino map
+xfsdump: dumping directories
+xfsdump: dumping non-directory files
+
+xfsdump: ending media file
+xfsdump: media file size 693630216 bytes
+xfsdump: dump size (non-dir files) : 680698184 bytes
+xfsdump: dump complete: 23 seconds elapsed
+xfsdump: Dump Summary:
+xfsdump:   stream 0 /tmp/rootdump OK (success)
+xfsdump: Dump Status: SUCCESS
+vagrant@otuslinux:~[vagrant@otuslinux ~]$
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo mount /dev/mapper/VolGroup00-LogVol_root /mnt/
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo xfsrestore -f /tmp/rootdump /mnt/
+xfsrestore: using file dump (drive_simple) strategy
+xfsrestore: version 3.1.7 (dump format 3.0) - type ^C for status and control
+xfsrestore: searching media for dump
+xfsrestore: examining media file 0
+xfsrestore: dump description:
+xfsrestore: hostname: otuslinux
+xfsrestore: mount point: /
+xfsrestore: volume: /dev/mapper/vg0-root_temp
+xfsrestore: session time: Mon May 14 06:45:35 2018
+xfsrestore: level: 0
+xfsrestore: session label: "full"
+xfsrestore: media label: "0"
+xfsrestore: file system id: cd9ee7ed-d4a3-44a3-886c-2912fa6d87be
+xfsrestore: session id: 4113d6ee-60aa-41d7-879e-cf3de25e6de1
+xfsrestore: media id: fe727483-b506-4b25-85ad-0767811ca6ca
+xfsrestore: using online session inventory
+xfsrestore: searching media for directory dump
+xfsrestore: reading directories
+xfsrestore: 2654 directories and 23254 entries processed
+xfsrestore: directory post-processing
+xfsrestore: restoring non-directory files
+xfsrestore: restore complete: 9 seconds elapsed
+xfsrestore: Restore Summary:
+xfsrestore:   stream 0 /tmp/rootdump OK (success)
+xfsrestore: Restore Status: SUCCESS
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo mount /dev/mapper/VolGroup00-LogVol_home /mnt/
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo cp -ra /home/* /mnt/
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo ls -la /mnt/
+total 24
+drwxr-xr-x.  4 root    root     4096 May 14 06:50 .
+drwxr-xr-x. 17 root    root      224 May 14 05:54 ..
+drwx------.  2 root    root    16384 May 14 06:41 lost+found
+drwx------.  3 vagrant vagrant  4096 May 14 05:53 vagrant
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo lsblk
+NAME                       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                          8:0    0   40G  0 disk
+├─sda1                       8:1    0    1M  0 part
+├─sda2                       8:2    0    1G  0 part /boot
+└─sda3                       8:3    0   39G  0 part
+  ├─VolGroup00-LogVol01    253:1    0  1.5G  0 lvm  [SWAP]
+  ├─VolGroup00-LogVol_root 253:2    0    8G  0 lvm  /mnt
+  └─VolGroup00-LogVol_home 253:3    0    8G  0 lvm  /mnt
+sdb                          8:16   0  250M  0 disk
+sdc                          8:32   0  2.5G  0 disk
+└─vg0-root_temp            253:0    0  2.4G  0 lvm  /
+sdd                          8:48   0  1.5G  0 disk
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo pvcreate /dev/sd{b,d}
+  Physical volume "/dev/sdb" successfully created.
+  Physical volume "/dev/sdd" successfully created.
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo vgcreate vg1 /dev/sdb /dev/sdd
+  Volume group "vg1" successfully created
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo lvcreate -L 240M -m1 -n vg1
+  No command with matching syntax recognised.  Run 'lvcreate --help' for more information.
+  Nearest similar command has syntax:
+  lvcreate -m|--mirrors Number -L|--size Size[m|UNIT] VG
+  Create a raid1 or mirror LV (infers --type raid1|mirror).
+
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo lvcreate -L 240M -m1 -n LogVol_var vg1
+  Logical volume "LogVol_var" created.
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo mkfs.ext4 /dev/mapper/vg1-LogVol_var
+mke2fs 1.42.9 (28-Dec-2013)
+Filesystem label=
+OS type: Linux
+Block size=1024 (log=0)
+Fragment size=1024 (log=0)
+Stride=0 blocks, Stripe width=0 blocks
+61440 inodes, 245760 blocks
+12288 blocks (5.00%) reserved for the super user
+First data block=1
+Maximum filesystem blocks=33816576
+30 block groups
+8192 blocks per group, 8192 fragments per group
+2048 inodes per group
+Superblock backups stored on blocks:
+        8193, 24577, 40961, 57345, 73729, 204801, 221185
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (4096 blocks): done
+Writing superblocks and filesystem accounting information: done
+
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo mount /dev/mapper/vg1-LogVol_var /mnt/
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo cp -ra /var/* /mnt/
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo vgs
+  VG         #PV #LV #SN Attr   VSize   VFree
+  VolGroup00   1   3   0 wz--n- <38.97g <21.47g
+  vg0          1   1   0 wz--n-  <2.44g      0
+  vg1          2   1   0 wz--n-   1.70g  <1.23g
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo lvs
+  LV          VG         Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  LogVol01    VolGroup00 -wi-ao----   1.50g
+  LogVol_home VolGroup00 -wi-ao----   8.00g
+  LogVol_root VolGroup00 -wi-ao----   8.00g
+  root_temp   vg0        -wi-ao----  <2.44g
+  LogVol_var  vg1        rwi-aor--- 240.00m                                    100.00
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo mount /dev/mapper/VolGroup00-LogVol_root /mnt/
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo vi /mnt/etc/fstab
+
+
+
+
+
+
+
+
+
+
+#
+# /etc/fstab
+# Created by anaconda on Tue Apr  3 21:42:15 2018
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk'
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+#
+/dev/mapper/vg0-root_temp       /                       xfs     defaults        0 0
+#/dev/mapper/VolGroup00-LogVol00 /                       xfs     defaults        0 0
+UUID=a9953552-87ca-4e1c-972e-fb484ce749fe /boot                   xfs     defaults        0 0
+/dev/mapper/VolGroup00-LogVol01 swap                    swap    defaults        0 0
+
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ chmod +x ./fgen.sh
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ ./fgen.sh
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000244861 s, 41.8 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000234059 s, 43.7 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000239859 s, 42.7 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000253127 s, 40.5 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000266812 s, 38.4 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000233535 s, 43.8 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.00022606 s, 45.3 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000242643 s, 42.2 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000288849 s, 35.5 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000238131 s, 43.0 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000228431 s, 44.8 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000220515 s, 46.4 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000270733 s, 37.8 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000241776 s, 42.4 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000243153 s, 42.1 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000235167 s, 43.5 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.00027647 s, 37.0 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000235627 s, 43.5 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000236473 s, 43.3 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000242378 s, 42.2 MB/s
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ lsblk
+NAME                       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                          8:0    0   40G  0 disk
+├─sda1                       8:1    0    1M  0 part
+├─sda2                       8:2    0    1G  0 part /boot
+└─sda3                       8:3    0   39G  0 part
+  ├─VolGroup00-LogVol_root 253:0    0    8G  0 lvm  /
+  ├─VolGroup00-LogVol01    253:1    0  1.5G  0 lvm  [SWAP]
+  └─VolGroup00-LogVol_home 253:3    0    8G  0 lvm  /home
+sdb                          8:16   0  250M  0 disk
+├─vg1-LogVol_var_rmeta_0   253:4    0    4M  0 lvm
+│ └─vg1-LogVol_var         253:8    0  240M  0 lvm  /var
+└─vg1-LogVol_var_rimage_0  253:5    0  240M  0 lvm
+  └─vg1-LogVol_var         253:8    0  240M  0 lvm  /var
+sdc                          8:32   0  2.5G  0 disk
+└─vg0-root_temp            253:2    0  2.4G  0 lvm
+sdd                          8:48   0  1.5G  0 disk
+├─vg1-LogVol_var_rmeta_1   253:6    0    4M  0 lvm
+│ └─vg1-LogVol_var         253:8    0  240M  0 lvm  /var
+└─vg1-LogVol_var_rimage_1  253:7    0  240M  0 lvm
+  └─vg1-LogVol_var         253:8    0  240M  0 lvm  /var
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ ls
+f1   f11  f13  f15  f17  f19  f20  f4  f6  f8  fgen.sh
+f10  f12  f14  f16  f18  f2   f3   f5  f7  f9  screenlog.0
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ rm f{1...10}
+rm: cannot remove ‘f{1...10}’: No such file or directory
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo rm f{1...10}
+rm: cannot remove ‘f{1...10}’: No such file or directory
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo rm f{1..10}
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ ls -l
+total 128
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f11
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f12
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f13
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f14
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f15
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f16
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f17
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f18
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f19
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f20
+-rwxrwxr-x. 1 vagrant vagrant    90 May 14 07:43 fgen.sh
+-rw-rw-r--. 1 vagrant vagrant  3558 May 14 07:44 screenlog.0
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ ls
+f11  f12  f13  f14  f15  f16  f17  f18  f19  f20  fgen.sh  screenlog.0
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ ./fgen.sh
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000263322 s, 38.9 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000231909 s, 44.2 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000264428 s, 38.7 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000296784 s, 34.5 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000265638 s, 38.5 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000268282 s, 38.2 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000263743 s, 38.8 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000230168 s, 44.5 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000228909 s, 44.7 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000233856 s, 43.8 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000500755 s, 20.4 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000467284 s, 21.9 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000468619 s, 21.9 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000484394 s, 21.1 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000584343 s, 17.5 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000461314 s, 22.2 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000458186 s, 22.3 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000422813 s, 24.2 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000541236 s, 18.9 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000614278 s, 16.7 MB/s
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo lvcreate -L 5G -n snap_home /dev/mapper/VolGroup00-LogVol_home
+  Volume group name expected (no slash)
+  Run `lvcreate --help' for more information.
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo lvcreate -L 5G -s -n snap_home /dev/mapper/VolGroup00-LogVol_hom  Using default stripesize 64.00 KiB.
+  Logical volume "snap_home" created.
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ rm {1..10}
+rm: cannot remove ‘1’: No such file or directory
+rm: cannot remove ‘2’: No such file or directory
+rm: cannot remove ‘3’: No such file or directory
+rm: cannot remove ‘4’: No such file or directory
+rm: cannot remove ‘5’: No such file or directory
+rm: cannot remove ‘6’: No such file or directory
+rm: cannot remove ‘7’: No such file or directory
+rm: cannot remove ‘8’: No such file or directory
+rm: cannot remove ‘9’: No such file or directory
+rm: cannot remove ‘10’: No such file or directory
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo rm {1..10}
+rm: cannot remove ‘1’: No such file or directory
+rm: cannot remove ‘2’: No such file or directory
+rm: cannot remove ‘3’: No such file or directory
+rm: cannot remove ‘4’: No such file or directory
+rm: cannot remove ‘5’: No such file or directory
+rm: cannot remove ‘6’: No such file or directory
+rm: cannot remove ‘7’: No such file or directory
+rm: cannot remove ‘8’: No such file or directory
+rm: cannot remove ‘9’: No such file or directory
+rm: cannot remove ‘10’: No such file or directory
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ ls -l
+total 252
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f1
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f10
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f11
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f12
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f13
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f14
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f15
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f16
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f17
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f18
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f19
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f2
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f20
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f3
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f4
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f5
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f6
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f7
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f8
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f9
+-rwxrwxr-x. 1 vagrant vagrant    90 May 14 07:43 fgen.sh
+-rw-rw-r--. 1 vagrant vagrant  7245 May 14 07:47 screenlog.0
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo rm f{1..10}
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ ls -l
+total 136
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f11
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f12
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f13
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f14
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f15
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f16
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f17
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f18
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f19
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f20
+-rwxrwxr-x. 1 vagrant vagrant    90 May 14 07:43 fgen.sh
+-rw-rw-r--. 1 vagrant vagrant  9785 May 14 07:47 screenlog.0
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ ls
+f11  f12  f13  f14  f15  f16  f17  f18  f19  f20  fgen.sh  screenlog.0
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo umount /home
+umount: /home: target is busy.
+        (In some cases useful info about processes that use
+         the device is found by lsof(8) or fuser(1))
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo yum install lsof
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror.tversu.ru
+ * extras: mirror.corbina.net
+ * updates: mirror.corbina.net
+Resolving Dependencies
+--> Running transaction check
+---> Package lsof.x86_64 0:4.87-5.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+===============================================================================================================
+ Package                 Arch                      Version                       Repository               Size
+===============================================================================================================
+Installing:
+ lsof                    x86_64                    4.87-5.el7                    base                    331 k
+
+Transaction Summary
+===============================================================================================================
+Install  1 Package
+
+Total download size: 331 k
+Installed size: 927 k
+Is this ok [y/d/N]: y
+Downloading packages:
+lsof-4.87-5.el7.x86_64.rpm                                                              | 331 kB  00:00:00
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : lsof-4.87-5.el7.x86_64                                                                      1/1
+  Verifying  : lsof-4.87-5.el7.x86_64                                                                      1/1
+
+Installed:
+  lsof.x86_64 0:4.87-5.el7
+
+Complete!
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ lsof /home
+COMMAND  PID    USER   FD   TYPE DEVICE SIZE/OFF   NODE NAME
+bash    1197 vagrant  cwd    DIR  253,3     4096 393217 /home/vagrant
+bash    1230 vagrant  cwd    DIR  253,3     4096 393217 /home/vagrant
+lsof    1371 vagrant  cwd    DIR  253,3     4096 393217 /home/vagrant
+lsof    1372 vagrant  cwd    DIR  253,3     4096 393217 /home/vagrant
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ exit
+exit
+[vagrant@otuslinux ~]$ cat screenlog.0
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ chmod +x ./fgen.sh
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ ./fgen.sh
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000244861 s, 41.8 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000234059 s, 43.7 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000239859 s, 42.7 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000253127 s, 40.5 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000266812 s, 38.4 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000233535 s, 43.8 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.00022606 s, 45.3 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000242643 s, 42.2 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000288849 s, 35.5 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000238131 s, 43.0 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000228431 s, 44.8 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000220515 s, 46.4 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000270733 s, 37.8 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000241776 s, 42.4 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000243153 s, 42.1 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000235167 s, 43.5 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.00027647 s, 37.0 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000235627 s, 43.5 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000236473 s, 43.3 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000242378 s, 42.2 MB/s
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ lsblk
+NAME                       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                          8:0    0   40G  0 disk
+├─sda1                       8:1    0    1M  0 part
+├─sda2                       8:2    0    1G  0 part /boot
+└─sda3                       8:3    0   39G  0 part
+  ├─VolGroup00-LogVol_root 253:0    0    8G  0 lvm  /
+  ├─VolGroup00-LogVol01    253:1    0  1.5G  0 lvm  [SWAP]
+  └─VolGroup00-LogVol_home 253:3    0    8G  0 lvm  /home
+sdb                          8:16   0  250M  0 disk
+├─vg1-LogVol_var_rmeta_0   253:4    0    4M  0 lvm
+│ └─vg1-LogVol_var         253:8    0  240M  0 lvm  /var
+└─vg1-LogVol_var_rimage_0  253:5    0  240M  0 lvm
+  └─vg1-LogVol_var         253:8    0  240M  0 lvm  /var
+sdc                          8:32   0  2.5G  0 disk
+└─vg0-root_temp            253:2    0  2.4G  0 lvm
+sdd                          8:48   0  1.5G  0 disk
+├─vg1-LogVol_var_rmeta_1   253:6    0    4M  0 lvm
+│ └─vg1-LogVol_var         253:8    0  240M  0 lvm  /var
+└─vg1-LogVol_var_rimage_1  253:7    0  240M  0 lvm
+  └─vg1-LogVol_var         253:8    0  240M  0 lvm  /var
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ ls
+f1   f11  f13  f15  f17  f19  f20  f4  f6  f8  fgen.sh
+f10  f12  f14  f16  f18  f2   f3   f5  f7  f9  screenlog.0
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ rm f{1...10}
+rm: cannot remove ‘f{1...10}’: No such file or directory
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo rm f{1...10}
+rm: cannot remove ‘f{1...10}’: No such file or directory
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo rm f{1..10}
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ ls -l
+total 128
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f11
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f12
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f13
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f14
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f15
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f16
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f17
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f18
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f19
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:43 f20
+-rwxrwxr-x. 1 vagrant vagrant    90 May 14 07:43 fgen.sh
+-rw-rw-r--. 1 vagrant vagrant  3558 May 14 07:44 screenlog.0
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ ls
+f11  f12  f13  f14  f15  f16  f17  f18  f19  f20  fgen.sh  screenlog.0
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ ./fgen.sh
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000263322 s, 38.9 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000231909 s, 44.2 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000264428 s, 38.7 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000296784 s, 34.5 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000265638 s, 38.5 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000268282 s, 38.2 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000263743 s, 38.8 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000230168 s, 44.5 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000228909 s, 44.7 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000233856 s, 43.8 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000500755 s, 20.4 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000467284 s, 21.9 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000468619 s, 21.9 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000484394 s, 21.1 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000584343 s, 17.5 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000461314 s, 22.2 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000458186 s, 22.3 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000422813 s, 24.2 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000541236 s, 18.9 MB/s
+10+0 records in
+10+0 records out
+10240 bytes (10 kB) copied, 0.000614278 s, 16.7 MB/s
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo lvcreate -L 5G -n snap_home /dev/mapper/VolGroup00-LogVol_home
+  Volume group name expected (no slash)
+  Run `lvcreate --help' for more information.
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo lvcreate -L 5G -s -n snap_home /dev/mapper/VolGroup00-LogVol_home
+  Using default stripesize 64.00 KiB.
+  Logical volume "snap_home" created.
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ rm {1..10}
+rm: cannot remove ‘1’: No such file or directory
+rm: cannot remove ‘2’: No such file or directory
+rm: cannot remove ‘3’: No such file or directory
+rm: cannot remove ‘4’: No such file or directory
+rm: cannot remove ‘5’: No such file or directory
+rm: cannot remove ‘6’: No such file or directory
+rm: cannot remove ‘7’: No such file or directory
+rm: cannot remove ‘8’: No such file or directory
+rm: cannot remove ‘9’: No such file or directory
+rm: cannot remove ‘10’: No such file or directory
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo rm {1..10}
+rm: cannot remove ‘1’: No such file or directory
+rm: cannot remove ‘2’: No such file or directory
+rm: cannot remove ‘3’: No such file or directory
+rm: cannot remove ‘4’: No such file or directory
+rm: cannot remove ‘5’: No such file or directory
+rm: cannot remove ‘6’: No such file or directory
+rm: cannot remove ‘7’: No such file or directory
+rm: cannot remove ‘8’: No such file or directory
+rm: cannot remove ‘9’: No such file or directory
+rm: cannot remove ‘10’: No such file or directory
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ ls -l
+total 252
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f1
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f10
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f11
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f12
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f13
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f14
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f15
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f16
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f17
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f18
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f19
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f2
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f20
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f3
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f4
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f5
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f6
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f7
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f8
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f9
+-rwxrwxr-x. 1 vagrant vagrant    90 May 14 07:43 fgen.sh
+-rw-rw-r--. 1 vagrant vagrant  7245 May 14 07:47 screenlog.0
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo rm f{1..10}
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ ls -l
+total 136
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f11
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f12
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f13
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f14
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f15
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f16
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f17
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f18
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f19
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f20
+-rwxrwxr-x. 1 vagrant vagrant    90 May 14 07:43 fgen.sh
+-rw-rw-r--. 1 vagrant vagrant  9785 May 14 07:47 screenlog.0
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ ls
+f11  f12  f13  f14  f15  f16  f17  f18  f19  f20  fgen.sh  screenlog.0
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo umount /home
+umount: /home: target is busy.
+        (In some cases useful info about processes that use
+         the device is found by lsof(8) or fuser(1))
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ sudo yum install lsof
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror.tversu.ru
+ * extras: mirror.corbina.net
+ * updates: mirror.corbina.net
+Resolving Dependencies
+--> Running transaction check
+---> Package lsof.x86_64 0:4.87-5.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+===============================================================================================================
+ Package                 Arch                      Version                       Repository               Size
+===============================================================================================================
+Installing:
+ lsof                    x86_64                    4.87-5.el7                    base                    331 k
+
+Transaction Summary
+===============================================================================================================
+Install  1 Package
+
+Total download size: 331 k
+Installed size: 927 k
+Is this ok [y/d/N]: y
+Downloading packages:
+lsof-4.87-5.el7.x86_64.rpm                                                              | 331 kB  00:00:00
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : lsof-4.87-5.el7.x86_64                                                                      1/1
+  Verifying  : lsof-4.87-5.el7.x86_64                                                                      1/1
+
+Installed:
+  lsof.x86_64 0:4.87-5.el7
+
+Complete!
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ lsof /home
+COMMAND  PID    USER   FD   TYPE DEVICE SIZE/OFF   NODE NAME
+bash    1197 vagrant  cwd    DIR  253,3     4096 393217 /home/vagrant
+bash    1230 vagrant  cwd    DIR  253,3     4096 393217 /home/vagrant
+lsof    1371 vagrant  cwd    DIR  253,3     4096 393217 /home/vagrant
+lsof    1372 vagrant  cwd    DIR  253,3     4096 393217 /home/vagrant
+vagrant@otuslinux:~[vagrant@otuslinux ~]$ exit
+[vagrant@otuslinux ~]$ cd /
+[vagrant@otuslinux /]$ lsof /home
+[vagrant@otuslinux /]$ sudo umount /home
+[vagrant@otuslinux /]$ sudo lvconvert --merge /dev/VolGroup00/snap_home
+  Merging of volume VolGroup00/snap_home started.
+  LogVol_home: Merged: 100.00%
+
+  LogVol_home: Merged: 100.00%
+[vagrant@otuslinux /]$
+[vagrant@otuslinux /]$ sudo mount /dev/mapper/VolGroup00-LogVol_home  /home
+[vagrant@otuslinux /]$ cd /home/vagrant/
+[vagrant@otuslinux ~]$ ls -l
+total 252
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f1
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f10
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f11
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f12
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f13
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f14
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f15
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f16
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f17
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f18
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f19
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f2
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f20
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f3
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f4
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f5
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f6
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f7
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f8
+-rw-rw-r--. 1 vagrant vagrant 10240 May 14 07:45 f9
+-rwxrwxr-x. 1 vagrant vagrant    90 May 14 07:43 fgen.sh
+-rw-rw-r--. 1 vagrant vagrant  7084 May 14 07:47 screenlog.0
+[vagrant@otuslinux ~]$ ls
+f1  f10  f11  f12  f13  f14  f15  f16  f17  f18  f19  f2  f20  f3  f4  f5  f6  f7  f8  f9  fgen.sh  screenlog.0
