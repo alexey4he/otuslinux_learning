@@ -1,5 +1,5 @@
 $TTL 3600
-$ORIGIN dns.lab.
+$ORIGIN newdns.lab.
 @               IN      SOA     ns01.newdns.lab. root.newdns.lab. (
                             1007201801 ; serial
                             3600       ; refresh (1 hour)
