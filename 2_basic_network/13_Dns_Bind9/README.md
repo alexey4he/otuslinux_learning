@@ -1,18 +1,46 @@
+Домашнее задание
+
 # Vagrant DNS Lab
+<details>
+<summary> Задачи: </summary> 
 
-A Bind's DNS lab with Vagrant and Ansible, based on CentOS 7.
+настраиваем split-dns
+взять стенд https://github.com/erlong15/vagrant-bind
+добавить еще один сервер client2
+завести в зоне dns.lab 
+имена
+web1 - смотрит на клиент1
+web2 смотрит на клиент2
 
-# Playground
+завести еще одну зону newdns.lab
+завести в ней запись
+www - смотрит на обоих клиентов
 
-<code>
-    vagrant ssh client
-</code>
+настроить split-dns
+клиент1 - видит обе зоны, но в зоне dns.lab только web1
 
-  * zones: dns.lab, reverse dns.lab and ddns.lab
-  * ns01 (192.168.50.10)
-    * master, recursive, allows update to ddns.lab
-  * ns02 (192.168.50.11)
-    * slave, recursive
-  * client (192.168.50.15)
-    * used to test the env, runs rndc and nsupdate
-  * zone transfer: TSIG key
+клиент2 видит только dns.lab
+
+</details>
+
+_____________________________________________
+
+# Выполнение
+
+- Добавил сервер **client2**
+- В **/etc/named/named.dns.client** добавил 2 записи **client** и **client2**.
+
+````
+web1            IN      A       192.168.50.15
+web2            IN      A       192.168.50.16
+````
+- Создал файл с описанием новой зоны **newdns.lab** выполнив все условия описаные в задаче.
+
+- Т.к. нам необходимо ограничить доступ **client** к одному из хостов в зоне **dns.lab** не нашел ни каких других вариантов кроме как создать еще один файл(**named.clientdns.lab**) с копией зоны **dns.lab**. И в нем удалил запись о хосте **web2**.
+
+- Осталось создать 2 файла, для обратной зоны. В одном у нас будет описание всех хостов, кроме **www.newdns.lab**, во втором все кроме **web2.dns.lab**.
+
+- После этого на **ns01** поправили конфигурационный файл **/etc/named.conf** добавив с помощью *acl* правила. В первом случае (*acl1*) видиv все хосты кроме **web2.dns.lab.**(файл с описанием зоны находится по пути */etc/named/named.clientdns.lab*).
+Во втором видим только зону **dns.lab.**
+
+После **vagrant up** можно сразу проверять систему.
