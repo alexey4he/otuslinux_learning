@@ -17,7 +17,12 @@ _____________________________________________
 # Выполнение
 
 [Задача 1](https://github.com/alexey4he/otuslinux_learning/tree/master/2_basic_network/12_Quagga_routing/Task_1)
+Для проверки необходимо перейти в папку *Task_1* и выполнить vagrant up. 
+
 
 [Задача 2](https://github.com/alexey4he/otuslinux_learning/tree/master/2_basic_network/12_Quagga_routing/Task_2)
+Для проверки необходимо перейти в папку *Task_2* и выполнить vagrant up. 
 
 [Задача 3](https://github.com/alexey4he/otuslinux_learning/tree/master/2_basic_network/12_Quagga_routing/Task_3)
+Для проверки необходимо перейти в папку *Task_3* и выполнить vagrant up. 
+Так же добавил комментарий, как можно реализовать решение немного по другому. 
