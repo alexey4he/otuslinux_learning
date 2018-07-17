@@ -120,7 +120,26 @@ _________________________
 
 Для того что бы роутинг был симметричным, при том что один из линков "дорогой" необходимо так же увеличить "стоимость" линка на другом конце этого линка. Тогда обратный траффик так же пойдет через соседей. 
 
-
+Так же возможен другой вариант, в vtysh нам необходимо прописать марширут до сети **10.0.20.0/24** через **ABR1** с помощью команды:
+````
+ABR3# conf t
+ABR3(config)# no ip route 10.0.20.0/24 vlan16
+ABR3(config)# ip route 10.0.20.0/24 172.16.16.10
+ABR3(config)# do write
+Building Configuration...
+Configuration saved to /etc/quagga/zebra.conf
+Configuration saved to /etc/quagga/ospfd.conf
+[OK]
+ABR3(config)# exit
+ABR3# exit
+[vagrant@ABR3 ~]$ tracepath 10.0.20.1
+ 1?: [LOCALHOST]                                         pmtu 1500
+ 1:  172.16.16.10                                          0.329ms
+ 1:  172.16.16.10                                          0.301ms
+ 2:  10.0.20.1                                             0.567ms reached
+     Resume: pmtu 1500 hops 2 back 2
+````
+_______________________________________________________________________________-
 
 ````
 [vagrant@ABR2 ~]$ tracepath 10.0.30.1
