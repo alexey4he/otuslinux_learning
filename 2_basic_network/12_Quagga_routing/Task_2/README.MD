@@ -1,5 +1,5 @@
 *Поднять OSPF между машинами на базе Quagga*
-
+<img src="https://github.com/alexey4he/otuslinux_learning/blob/master/2_basic_network/12_Quagga_routing/image/12Quagga_scheme_2.jpg"/>
 Поднял 3 машины ABR{1,2,3}. 
 
 <details> <summary>Вывод ip a ABR1:</summary>
