@@ -108,3 +108,12 @@
     inet6 fe80::f785:a816:1208:ec5f/64 scope link noprefixroute
        valid_lft forever preferred_lft forever
 ````
+_________________________
+
+````
+[root@ABR3 quagga]# tracepath 10.0.10.1
+ 1?: [LOCALHOST]                                         pmtu 1500
+ 1:  10.0.10.1                                             0.665ms reached
+ 1:  10.0.10.1                                             0.344ms reached
+     Resume: pmtu 1500 hops 1 back 1
+`````
