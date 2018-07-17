@@ -1,7 +1,7 @@
 *Поднять OSPF между машинами на базе Quagga*
 
 Поднял 3 машины ABR{1,2,3}. 
-
+<img src="https://github.com/alexey4he/otuslinux_learning/blob/master/2_basic_network/12_Quagga_routing/image/12Quagga_scheme_3.jpg"/>
 <details> <summary>Вывод ip a ABR1:</summary>
   <pre>
   <code>
@@ -115,6 +115,7 @@
        valid_lft forever preferred_lft forever
 </pre>
 </code>
+</details>
 _________________________
 
 Для того что бы роутинг был симметричным, при том что один из линков "дорогой" необходимо так же увеличить "стоимость" линка на другом конце этого линка. Тогда обратный траффик так же пойдет через соседей. 
