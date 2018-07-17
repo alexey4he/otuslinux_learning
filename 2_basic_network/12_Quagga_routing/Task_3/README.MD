@@ -123,7 +123,6 @@ _________________________
 Так же возможен другой вариант, в vtysh нам необходимо прописать марширут до сети **10.0.20.0/24** через **ABR1** с помощью команды:
 ````
 ABR3# conf t
-ABR3(config)# no ip route 10.0.20.0/24 vlan16
 ABR3(config)# ip route 10.0.20.0/24 172.16.16.10
 ABR3(config)# do write
 Building Configuration...
