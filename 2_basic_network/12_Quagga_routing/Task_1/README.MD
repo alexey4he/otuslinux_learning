@@ -39,7 +39,9 @@
 </code>
 </pre>
 </details>
+
 Конфигурация [zebra.conf](https://github.com/alexey4he/otuslinux_learning/blob/master/2_basic_network/12_Quagga_routing/Task_1/quagga_conf/1zebra.conf) на ABR1
+
 Конфигурация [ospfd.conf](https://github.com/alexey4he/otuslinux_learning/blob/master/2_basic_network/12_Quagga_routing/Task_1/quagga_conf/1ospfd.conf) на ABR1 
 __________________________________________________________________________________________________________________
 
@@ -82,6 +84,7 @@ ________________________________________________________________________________
 </details>
 
 Конфигурация [zebra.conf](https://github.com/alexey4he/otuslinux_learning/blob/master/2_basic_network/12_Quagga_routing/Task_1/quagga_conf/2zebra.conf) на ABR2 
+
 Конфигурация [ospfd.conf](https://github.com/alexey4he/otuslinux_learning/blob/master/2_basic_network/12_Quagga_routing/Task_1/quagga_conf/2ospfd.conf) на ABR2 
 __________________________________________________________________________________________________________________
 
