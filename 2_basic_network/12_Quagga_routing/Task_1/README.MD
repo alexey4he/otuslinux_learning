@@ -39,7 +39,9 @@
 </code>
 </pre>
 </details>
-
+Конфигурация [zebra.conf](https://github.com/alexey4he/otuslinux_learning/blob/master/2_basic_network/12_Quagga_routing/Task_1/quagga_conf/1zebra.conf) на ABR1
+Конфигурация [ospfd.conf](https://github.com/alexey4he/otuslinux_learning/blob/master/2_basic_network/12_Quagga_routing/Task_1/quagga_conf/1ospfd.conf) на ABR1 
+__________________________________________________________________________________________________________________
 
 <details><summary>Вывод ip a ABR2:</summary>
   <pre>
@@ -79,7 +81,11 @@
 </pre>
 </details>
 
- <details> <summary>Вывод ip a  ABR3:</summary>
+Конфигурация [zebra.conf](https://github.com/alexey4he/otuslinux_learning/blob/master/2_basic_network/12_Quagga_routing/Task_1/quagga_conf/2zebra.conf) на ABR2 
+Конфигурация [ospfd.conf](https://github.com/alexey4he/otuslinux_learning/blob/master/2_basic_network/12_Quagga_routing/Task_1/quagga_conf/2ospfd.conf) на ABR2 
+__________________________________________________________________________________________________________________
+
+<details> <summary>Вывод ip a  ABR3:</summary>
 <pre>
 <code>
 [vagrant@ABR3 ~]$ ip a
@@ -115,6 +121,12 @@
        valid_lft forever preferred_lft forever
 </pre>
 </code>
+</details>
+
+Конфигурация [zebra.conf](https://github.com/alexey4he/otuslinux_learning/blob/master/2_basic_network/12_Quagga_routing/Task_1/quagga_conf/3zebra.conf) на ABR3 
+
+Конфигурация 
+[ospfd.conf](https://github.com/alexey4he/otuslinux_learning/blob/master/2_basic_network/12_Quagga_routing/Task_1/quagga_conf/3ospfd.conf) на ABR3
 _________________________
 
 ````
