@@ -2,6 +2,8 @@
 
 Поднял 3 машины ABR{1,2,3}. 
 
+<img src="https://github.com/alexey4he/otuslinux_learning/blob/master/2_basic_network/12_Quagga_routing/image/12Quagga_scheme_1.jpg" />
+
 <details> <summary>Вывод ip a ABR1:</summary>
   <pre>
   <code>
