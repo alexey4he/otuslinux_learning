@@ -1,10 +1,10 @@
 *Поднять OSPF между машинами на базе Quagga*
 
 Поднял 3 машины ABR{1,2,3}. 
-  
-  Вывод **ip a**  *ABR1*:
 
-````
+<details> <summary>Вывод ip a ABR1:</summary>
+  <pre>
+  <code>
   [vagrant@ABR1 ~]$ ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -35,12 +35,15 @@
     inet 172.16.12.10/30 brd 172.16.12.11 scope global noprefixroute vlan12
        valid_lft forever preferred_lft forever
     inet6 fe80::8e99:f637:18f7:c121/64 scope link noprefixroute
-       valid_lft forever preferred_lft forever
-````
+       valid_lft forever preferred_lft forever"
+</code>
+</pre>
+</details>
 
-  Вывод **ip a**  *ABR2*:
 
-````
+<details><summary>Вывод ip a ABR2:</summary>
+  <pre>
+  <code>
 [vagrant@ABR2 ~]$ ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -72,10 +75,13 @@
        valid_lft forever preferred_lft forever
     inet6 fe80::a90:e3c4:9aec:c19d/64 scope link noprefixroute
        valid_lft forever preferred_lft forever
-````
-  Вывод **ip a**  *ABR3*:
+</code>
+</pre>
+</details>
 
-````
+ <details> <summary>Вывод ip a  ABR3:</summary>
+<pre>
+<code>
 [vagrant@ABR3 ~]$ ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -107,7 +113,8 @@
        valid_lft forever preferred_lft forever
     inet6 fe80::f785:a816:1208:ec5f/64 scope link noprefixroute
        valid_lft forever preferred_lft forever
-````
+</pre>
+</code>
 _________________________
 
 ````
