@@ -18,4 +18,6 @@ _____________________________________________
 
 [Задача 1](https://github.com/alexey4he/otuslinux_learning/tree/master/2_basic_network/12_Quagga_routing/Task_1)
 
+[Задача 2](https://github.com/alexey4he/otuslinux_learning/tree/master/2_basic_network/12_Quagga_routing/Task_2)
 
+[Задача 3](https://github.com/alexey4he/otuslinux_learning/tree/master/2_basic_network/12_Quagga_routing/Task_3)
