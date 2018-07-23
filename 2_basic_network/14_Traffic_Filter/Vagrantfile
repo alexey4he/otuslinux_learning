@@ -2,14 +2,6 @@
 # vim: set ft=ruby :
 
 MACHINES = {
-:inetRouter => {
-        :box_name => "centos/6",
-        #:public => {:adapter => 3},
-        :net => [
-                   {ip: '192.168.255.1', adapter: 2, netmask: "255.255.255.248", virtualbox__intnet: "router-net"},
-                ]
-  },
-  
 :inetRouter2 => {
         :box_name => "centos/7",
         :public => {:adapter => 3},
@@ -18,6 +10,14 @@ MACHINES = {
                 ]
   },
 
+:inetRouter => {
+        :box_name => "centos/6",
+        #:public => {:adapter => 3},
+        :net => [
+                   {ip: '192.168.255.1', adapter: 2, netmask: "255.255.255.248", virtualbox__intnet: "router-net"},
+                ]
+  },
+  
   :centralRouter => {
         :box_name => "centos/7",
         :net => [
@@ -70,7 +70,10 @@ Vagrant.configure("2") do |config|
             echo "192.168.0.0/24 via 192.168.255.2 dev eth1" >> /etc/sysconfig/network-scripts/route-eth1
             echo "192.168.1.0/24 via 192.168.255.2 dev eth1" >> /etc/sysconfig/network-scripts/route-eth1
             echo "192.168.2.0/24 via 192.168.255.2 dev eth1" >> /etc/sysconfig/network-scripts/route-eth1
+            sed -i '66s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+            service sshd restart           
             service network restart
+            iptables-restore /vagrant/inetRouteriptables
             SHELL
 
         when "inetRouter2"
@@ -78,12 +81,14 @@ Vagrant.configure("2") do |config|
             echo "net.ipv4.conf.all.forwarding=1" >> /etc/sysctl.conf
             touch /etc/sysconfig/network-scripts/route-eth1 
             service network restart
+            iptables-restore /vagrant/inetRouter2iptables
             SHELL
 
         when "centralRouter"
           box.vm.provision "shell", run: "always", inline: <<-SHELL
             echo "net.ipv4.conf.all.forwarding=1" >> /etc/sysctl.conf
             echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
+            sysctl -p
             echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 
             nmcli connection modify "System eth2" +ipv4.addresses 192.168.11.1/30
             nmcli connection modify "System eth2" +ipv4.addresses 192.168.12.1/30
@@ -92,11 +97,9 @@ Vagrant.configure("2") do |config|
             echo "192.168.2.0/24 via 192.168.12.2" >> /etc/sysconfig/network-scripts/route-eth2
             echo "192.168.1.0/24 via 192.168.11.2" >> /etc/sysconfig/network-scripts/route-eth2
             systemctl restart network
-            sysctl -p
-            yum install epel-release -y
-            yum install nginx -y
-            yum start nginx
-            yum enable nginx
+            iptables-restore /vagrant/centralRouteriptables
+            yum install nmap -y
+            cp /vagrant/knock_client.sh /home/vagrant/
             SHELL
 
         when "centralServer"
@@ -106,8 +109,8 @@ Vagrant.configure("2") do |config|
           systemctl restart network
           yum install epel-release -y
           yum install nginx -y
-          yum start nginx
-          yum enable nginx
+          systemctl start nginx
+          systemctl enable nginx
           SHELL
 
         end 

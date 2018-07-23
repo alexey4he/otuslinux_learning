@@ -4,132 +4,98 @@
 <summary> Дано </summary> 
   
 # otus-linux
-Vagrantfile - для стенда урока 9 - Network
-https://github.com/erlong15/otus-linux/tree/network
 
-(ветка network)
+Сценарии iptables
+1) реализовать knocking port
+- centralRouter может попасть на ssh inetrRouter через knock скрипт
+пример в материалах
+2) добавить inetRouter2, который виден(маршрутизируется) с хоста
+3) запустить nginx на centralServer
+4) пробросить 80й порт на inetRouter2 8080
+5) дефолт в инет оставить через inetRouter
 
-Vagrantfile с начальным построением сети
-- inetRouter
-- centralRouter
-- centralServer
-
-тестировалось на virtualbox
-
-# Планируемая архитектура
-построить следующую архитектуру
-
-Сеть office1
-- 192.168.2.0/26 - dev
-- 192.168.2.64/26 - test servers
-- 192.168.2.128/26 - managers
-- 192.168.2.192/26 - office hardware
-
-Сеть office2
-- 192.168.1.0/25 - dev
-- 192.168.1.128/26 - test servers
-- 192.168.1.192/26 - office hardware
-
-
-Сеть central
-- 192.168.0.0/28 - directors
-- 192.168.0.32/28 - office hardware
-- 192.168.0.64/26 - wifi
-
-```
-Office1 ---\
------> Central --IRouter --> internet
-Office2----/
-```
-Итого должны получится следующие сервера
-- inetRouter
-- centralRouter
-- office1Router
-- office2Router
-- centralServer
-- office1Server
-- office2Server
-
-# Теоретическая часть
-- Найти свободные подсети
-- Посчитать сколько узлов в каждой подсети, включая свободные
-- Указать broadcast адрес для каждой подсети
-- проверить нет ли ошибок при разбиении
-
-# Практическая часть
-- Соединить офисы в сеть согласно схеме и настроить роутинг
-- Все сервера и роутеры должны ходить в инет черз inetRouter
-- Все сервера должны видеть друг друга
-- у всех новых серверов отключить дефолт на нат (eth0), который вагрант поднимает для связи
-- при нехватке сетевых интервейсов добавить по несколько адресов на интерфейс
 </details>
-
 
 ______________________________________________________
 # Выполнение
 
-# Теоретическая часть
-
-______________________________________________________
-**Сеть office1:**
-
-**192.168.2.0/26 - dev:**
-- Всего узлов: 62
-- Broadcast Address: 192.168.2.63
-
-**192.168.2.64/26 - test servers:**
-- Всего узлов: 62
-- Broadcast Addres: 192.168.2.127
-
-**192.168.2.128/26 - managers:**
-- Всего узлов: 62
-- Broadcast Addres: 192.168.2.191
-
-**192.168.2.192/26 - office hardware:**
-- Всего узлов: 62
-- Broadcast Addres: 192.168.2.254
-______________________________________________________
-**Сеть office2:**
-
-**192.168.1.0/25 - dev:**
-- Всего узлов: 126
-- Broadcast Address: 192.168.1.127
-
-**192.168.1.128/26 - test servers:**
-- Всего узлов: 62
-- Broadcast Addres: 192.168.1.191
-
-**192.168.1.192/26 - office hardware:**
-- Всего узлов: 62
-- Broadcast Addres: 192.168.1.254
-______________________________________________________
-**Сеть Central:**
-
-**192.168.0.0/28 - director:**
-- Всего узлов: 14 
-- Broadcast Address: 192.168.0.15
-
-**192.168.0.32/28 - test servers:**
-- Всего узлов: 14
-- Broadcast Addres: 192.168.1.47
-
-**192.168.1.64/26 - office hardware:**
-- Всего узлов: 62
-- Broadcast Addres: 192.168.1.127
+<img src="Image/image.jpg" />
 ______________________________________________________
 
-Свободные подсети имеются только в сети Central: 
-- 192.168.0.16/28
-- 192.168.0.48/28
-- 192.168.0.128/25
-___________________________________________________________________
+Добавил inetRouter2 с публичным интерфейсом.
+На centralServer поднят *nginx* с дефолтной конфигурацией. 
+Для того что бы *nginx* был виден нам с хоста на котором поднят стенд, необходимо с помощью iptables пробросить **80** порт сначала на **centralRouter**, а с него на centralServer.
 
-# Практическая часть
+
+### Настройка iptables на inetRouter2
+
+Пробрасываем 80 порт с интерфейса **eth2** - inetRouter2 на **eth1** - centralRouter:
+
+``````
+iptables -t nat -A PREROUTING -p tcp -i eth2 --dport 80 -j DNAT --to-destination 192.168.255.2 
+``````
+
+Так же необходимо изменить адресс источника, который обращается к хосту. Иначе nginx на centralServer не *узнает* куда *ответить*. Для этого пропишем команду, которая подменит адресс источника который обращается на 80 порт, на адрес inetRouter2
+
+``````
+iptables -t nat -A POSTROUTING -p --dst 192.168.255.2 --dport 80 -j SNAT --to-source 192.168.255.3 
+``````
+
+### Настройка iptables на centralRouter
+
+Т.к. centralServer видит inetRouter2, нам остается только прокинуть 80 порт c адресса 192.168.255.2 на 192.168.0.2.
+
+``````
+iptables -t nat -A PREROUTING -p tcp -d 192.168.255.2 --dport 80 -j DNAT --to-destination 192.168.0.2
+``````
+
+После этого с хоста на котором поднят стенд мы сможем обращаться к **nginx'y** который находится на centralServer по ip адресу который получил inetRouter2 на сетевом интерфейсе eth2.
 
 ______________________________________________________
-Подсмотрел у коллег как можно отрисовать схему, мне понравилось. 
 
-<img src="Image/Block2Task1.jpg" />
+### knocking port
+
+Честно говоря, делал по мануалу с [digital ocean](https://www.digitalocean.com/community/tutorials/how-to-configure-port-knocking-using-only-iptables-on-an-ubuntu-vps).
+
+А именно не совсем понял, что происходит с от флага *-m recent --name AUTH1*. Остальное могу даже объяснить)
+
+<details>
+<summary> Настраиваем portKnocking средствами iptables </summary> 
 
 
+`````
+iptables -N KNOCKING
+iptables -N GATE1
+iptables -N GATE2
+iptables -N GATE3
+iptables -N PASSED
 
+sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+sudo iptables -A INPUT -i lo -j ACCEPT
+sudo iptables -A INPUT -i eth0 -j ACCEPT
+sudo iptables -A INPUT -j KNOCKING
+sudo iptables -A GATE1 -p tcp --dport 1111 -m recent --name AUTH1 --set -j DROP
+sudo iptables -A GATE1 -j DROP
+sudo iptables -A GATE2 -m recent --name AUTH1 --remove
+sudo iptables -A GATE2 -p tcp --dport 2222 -m recent --name AUTH2 --set -j DROP
+sudo iptables -A GATE2 -j GATE1
+sudo iptables -A GATE3 -m recent --name AUTH2 --remove
+sudo iptables -A GATE3 -p tcp --dport 2222 -m recent --name AUTH3 --set -j DROP
+sudo iptables -A GATE3 -j GATE1
+sudo iptables -A PASSED -m recent --name AUTH3 --remove
+sudo iptables -A PASSED -p tcp --dport 22 -j ACCEPT
+sudo iptables -A PASSED -j GATE1
+sudo iptables -A KNOCKING -m recent --rcheck --seconds 30 --name AUTH3 -j PASSED
+sudo iptables -A KNOCKING -m recent --rcheck --seconds 10 --name AUTH2 -j GATE3
+sudo iptables -A KNOCKING -m recent --rcheck --seconds 10 --name AUTH1 -j GATE2
+sudo iptables -A KNOCKING -j GATE1
+`````
+
+</details>
+
+_______________________________________________
+
+### Как проверить.
+После того как выполним vagrant up. Необходимо посмотреть какой ip адрес получил inetRouter2 на **eth2**. На нем будет виден *nginx* с centralServer.
+
+Для проверки knocking port, на centralRouter в домашней папке пользователя **vagrant** лежит скрипт **knock_client.sh** для *простукивания* нужных портов с последующей авторизаций на inetRouter. 
