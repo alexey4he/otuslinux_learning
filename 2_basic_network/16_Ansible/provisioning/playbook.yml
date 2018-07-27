@@ -57,7 +57,7 @@
         destination_port: 80
         jump: DNAT
         to_destination: 192.168.255.2
-        
+
     - name: snat source ip in connection to inetRoute2 for publicip and 80 port
       iptables: 
         table: nat
@@ -67,3 +67,113 @@
         destination_port: 80
         jump: SNAT
         to_source: 192.168.255.3
+
+- hosts: centralRouter
+  become: yes
+  tasks:
+    - name: Enable ip forwarding all interface
+      sysctl: 
+        name: net.ipv4.conf.all.forwarding
+        value: 1
+        sysctl_set: yes
+        state: present
+        reload: yes
+
+    - name: setup NetworkManager-glib him need for configured interface in nmcli, and setup nmap for port knocking"
+      yum:
+          name: "{{ packages }}"
+      vars:
+          packages:
+            - NetworkManager-glib
+            - nmap
+
+
+    - name: disable defroute eth0 interface
+      lineinfile: 
+        path: /etc/sysconfig/network-scripts/ifcfg-eth0
+        line: 'DEFROUTE=no'
+      notify: 
+        - restart network
+    
+    - name: add gateway for available connection internet the eth1 interface
+      nmcli:  
+        conn_name: "System eth1"
+        type: ethernet
+        gw4: 192.168.255.1
+        state: present
+
+    - name: dnat 192.168.255.2:80 to 192.168.0.2:80
+      iptables: 
+        table: nat
+        chain: PREROUTING
+        destination: 192.168.255.2/32
+        protocol: tcp
+        destination_port: 80
+        jump: DNAT
+        to_destination: 192.168.0.2
+
+
+    - name: copy resolv.conf to the client2
+      copy: 
+        src: knock_client.sh
+        dest: /home/vagrant/knock_client.sh
+        owner: root 
+        group: root 
+        mode: 0755
+
+  handlers:
+    - name: restart network
+      service:
+          state: restarted
+          name: network
+
+- hosts: centralServer
+  become: yes
+  tasks:
+    - name: install networkmanager-glib, him need configure network interface use nmcli
+      yum:
+          name: NetworkManager-glib
+          state: present
+
+    - name: disable defroute eth0 interface
+      lineinfile: 
+        path: /etc/sysconfig/network-scripts/ifcfg-eth0
+        line: 'DEFROUTE=no'
+      notify: 
+        - restart network
+
+    - name: add gateway for available connection internet the eth1 interface
+      nmcli:  
+        conn_name: "System eth1"
+        type: ethernet
+        gw4: 192.168.0.1
+        state: present
+
+    - name: add epel-release repo
+      yum:
+          name: epel-release
+          state: present
+
+    - name: setup nginx server
+      yum:
+          name: nginx
+          state: present
+      notify: 
+        - start nginx
+        - enable nginx
+
+  handlers:
+    - name: start nginx
+      systemd:
+        state: started
+        name: nginx
+
+    - name: enable nginx
+      service:
+        name: nginx
+        enabled: yes
+
+    - name: restart network
+      service:
+          state: restarted
+          name: network
