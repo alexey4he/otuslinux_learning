@@ -29,12 +29,12 @@ Vagrant.configure("2") do |config|
           sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
           yum install epel-release -y
           yum install pam_script -y
-          useradd  
-          echo "123456" | passwd jonsnow --stdin
-          useradd ariastark 
-          echo "123456" | passwd ariastark --stdin
+          useradd  bob
+          echo "123456" | passwd bob --stdin
+          useradd phill 
+          echo "123456" | passwd phill --stdin
           groupadd admin
-          usermod  -G admin
+          usermod bob -G admin
           cp /vagrant/pam_script /etc/
           chmod +x /etc/pam_script
           echo "auth   required   pam_script.so" >> /etc/pam.d/sshd
