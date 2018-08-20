@@ -35,11 +35,14 @@ Vagrant.configure("2") do |config|
           echo "123456" | passwd phill --stdin
           groupadd admin
           usermod bob -G admin
-          cp /vagrant/pam_script /etc/
-          chmod +x /etc/pam_script
+          cp /vagrant/pam-script /etc/pam-script.d/pam-script_auth
+          chmod +x /etc/pam-script.d/pam-script_auth
           echo "auth   required   pam_script.so" >> /etc/pam.d/sshd
           systemctl restart sshd
-          SHELL
+          touch /etc/security/capability.conf
+          echo "cap_sys_admin     bob" >> /etc/security/capability.conf
+          sed -i '2s auth            optional            pam_cap.so' /etc/pam.d/su
+          SHELL         
         end 
 
       end
