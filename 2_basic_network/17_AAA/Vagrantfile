@@ -41,7 +41,7 @@ Vagrant.configure("2") do |config|
           systemctl restart sshd
           touch /etc/security/capability.conf
           echo "cap_sys_admin     bob" >> /etc/security/capability.conf
-          sed -i '2s auth            optional            pam_cap.so' /etc/pam.d/su
+          sed -i '2i auth            optional            pam_cap.so' /etc/pam.d/su
           SHELL
 
         end 
