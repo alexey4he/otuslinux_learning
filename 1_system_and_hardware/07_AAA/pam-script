@@ -1,0 +1,20 @@
+#!/bin/bash
+dayWeek=`date +%u`
+daydm=`date +%d/%m`
+
+if [[ `grep $PAM_USER /etc/group | grep admin` ]]
+then
+        exit 0
+fi
+
+if [[ $dayWeek > 5 ]]
+then
+        exit 1
+elif [[ `grep $daydm /vagrant/holidays2018` ]]
+then
+        echo "true $?"
+        exit 1
+else
+        echo "false $?"
+        exit 0
+fi

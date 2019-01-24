@@ -1,0 +1,51 @@
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+
+MACHINES = {
+:aaaServer => {
+    :box_name => "centos/7",
+    :net => [
+               {ip: '10.10.140.1', adapter: 3, netmask: "255.255.255.0", virtualbox__intnet: "openvpn-net"},
+            ]
+    },
+}
+
+Vagrant.configure("2") do |config|
+
+  MACHINES.each do |boxname, boxconfig|
+
+    config.vm.define boxname do |box|
+
+        box.vm.box = boxconfig[:box_name]
+        box.vm.host_name = boxname.to_s
+
+        boxconfig[:net].each do |ipconf|
+            box.vm.network "private_network", ipconf
+        end
+
+        box.vm.provision "shell", inline: <<-SHELL
+          mkdir -p ~root/.ssh
+                cp ~vagrant/.ssh/auth* ~root/.ssh
+          sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+          yum install epel-release -y
+          yum install pam_script -y
+          useradd  bob
+          echo "123456" | passwd bob --stdin
+          useradd phill 
+          echo "123456" | passwd phill --stdin
+          groupadd admin
+          usermod bob -G admin
+          cp /vagrant/pam-script /etc/pam-script.d/pam-script_auth
+          chmod +x /etc/pam-script.d/pam-script_auth
+          echo "auth   required   pam_script.so" >> /etc/pam.d/sshd
+          systemctl restart sshd
+          touch /etc/security/capability.conf
+          echo "cap_sys_admin     bob" >> /etc/security/capability.conf
+          sed -i '2i auth            optional            pam_cap.so' /etc/pam.d/su
+          SHELL
+
+        end 
+
+      end
+    
+    end
