@@ -1,0 +1,10 @@
+relayhost=[smtp.yandex.ru]:587
+smtp_sasl_auth_enable=yes
+smtp_sasl_password_maps=hash:/etc/postfix/config/sasl_passwd
+smtp_sasl_security_options=noanonymous
+smtp_sasl_type=cyrus
+smtp_sasl_mechanism_filter=login
+smtp_sender_dependent_authentication=yes
+sender_canonical_maps=hash:/etc/postfix/config/canonical
+smtp_generic_maps=hash:/etc/postfix/config/generic
+smtp_use_tls=yes

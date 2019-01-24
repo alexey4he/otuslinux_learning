@@ -1,0 +1,36 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+    config.vm.box = "centos/7"
+    config.vm.hostname = "otuslinux"
+    config.vm.network "public_network", :mac => "080027ff13ac"
+    config.vm.synced_folder ".", "/vagrant"
+  
+    config.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.cpus = "1"
+    end
+
+    config.vm.provision "shell", inline: <<-SHELL
+    yum -y install epel-release
+    yum -y install nginx mailx cyrus-sasl cyrus-sasl-plain
+    sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+    sudo systemctl restart sshd
+    sysctl -w net.ipv6.conf.all.disable_ipv6=1
+    sysctl -w net.ipv6.conf.default.disable_ipv6=1
+    cp /vagrant/access-4560-c8671a.log /var/log/nginx/access.log
+    cp /vagrant/error-4560-d75c02.log /var/log/nginx/error.log
+    systemctl start nginx
+    systemctl enable nginx
+    sed -i 's/inet_protocols = all/inet_protocols = ipv4/g' /etc/postfix/main.cf
+    cat /vagrant/main >> /etc/postfix/main.cf
+    cp -r /vagrant/config /etc/postfix/
+    postmap /etc/postfix/config/*
+    systemctl restart postfix
+    echo "*  */1  *  *  * root /bin/bash /vagrant/script/report.sh" >> /etc/crontab
+    SHELL
+
+  end
+
+  
