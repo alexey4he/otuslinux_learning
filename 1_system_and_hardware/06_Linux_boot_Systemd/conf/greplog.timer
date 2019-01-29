@@ -1,0 +1,6 @@
+[Unit]
+Description=run greplog.service every 30 sec
+
+[Timer]
+OnUnitActiveSec=30s
+Unit=greplog.service

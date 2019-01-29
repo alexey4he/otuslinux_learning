@@ -1,46 +1,41 @@
 # -*- mode: ruby -*-
-# vim: set ft=ruby :
+# vi: set ft=ruby :
 
-MACHINES = {
-  :otuslinux => {
-        :box_name => "centos/7",
-        :ip_addr => '192.168.11.101',
-  		},
-	}	
-Vagrant.configure("2") do |config|
+Vagrant.configure(2) do |config|
+    config.vm.box = "centos/7"
+    config.vm.hostname = "otuslinux"
+    config.vm.network "public_network", :mac => "080027ff13ac"
+    config.vm.synced_folder ".", "/vagrant"
+  
+    config.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.cpus = "1"
+    end
 
-  MACHINES.each do |boxname, boxconfig|
+    config.vm.provision "shell", inline: <<-SHELL
+    yum -y install epel-release
+    yum -y install httpd spawn-fcgi mod_fcgid  php php-cli
+    cp /vagrant/conf/greplog.service /etc/systemd/system/greplog.service
+    cp /vagrant/conf/greplog.timer /etc/systemd/system/greplog.timer
+    cp /vagrant/conf/spawn-fcgi.service /etc/systemd/system/spawn-fcgi.service
+    cp /vagrant/conf/greplog.sh /home/vagrant/greplog.sh
+    cp /vagrant/conf/greplog /etc/sysconfig/greplog
+    echo "y" | cp /vagrant/conf/spawn-fcgi /etc/sysconfig/spawn-fcgi
+    cp /vagrant/conf/httpd@.service /etc/systemd/system/
+    cp /etc/httpd/conf/httpd.conf /etc/httpd/conf/test1.conf
+    sed -i '32iPidFile "/var/run/httpd@test1.pid"' /etc/httpd/conf/test1.conf
+    sed -i  's/Listen 80/Listen 8080/' /etc/httpd/conf/test1.conf
+    systemctl start greplog.service
+    systemctl start greplog.timer    
+    systemctl enable greplog.service
+    systemctl enable greplog.timer
+    systemctl start spawn-fcgi.service
+    systemctl enable spawn-fcgi.service
+    systemctl start httpd
+    systemctl enable httpd
+    
+    SHELL
 
-    config.vm.synced_folder ".", "/vagrant", disabled: true
-
-      config.vm.define boxname do |box|
-
-          box.vm.box = boxconfig[:box_name]
-          box.vm.host_name = boxname.to_s
-          config.vm.synced_folder ".", "vagrnat/", disabled: true
-          #box.vm.network "forwarded_port", guest: 3260, host: 3260+offset
-
-          box.vm.network "private_network", ip: boxconfig[:ip_addr]
-
-          box.vm.provider :virtualbox do |vb|
-            	  vb.customize ["modifyvm", :id, "--memory", "1024"]
-		  vb.customize ["storagectl", :id, "--name", "SATA", "--add", "sata" ]
-
-#		  boxconfig[:disks].each do |dname, dconf|
-#			  unless File.exist?(dconf[:dfile])
-#				vb.customize ['createhd', '--filename', dconf[:dfile], '--variant', 'Fixed', '--size', dconf[:size]]
-#			  end
-#			  vb.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', dconf[:port], '--device', 0, '--type', 'hdd', '--medium', dconf[:dfile]]
-
-#		  end
-          end
- 	  box.vm.provision "shell", inline: <<-SHELL
-	      mkdir -p ~root/.ssh
-              cp ~vagrant/.ssh/auth* ~root/.ssh
-
-      SHELL
-
-      end
   end
-end
 
+  

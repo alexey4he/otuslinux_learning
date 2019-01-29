@@ -1,0 +1,12 @@
+[Unit]
+Description=Grep Log Service
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/sysconfig/greplog
+WorkingDirectory=/home/vagrant/
+ExecStart=/bin/bash greplog.sh
+
+[Install]
+WantedBy=multi-user.target
