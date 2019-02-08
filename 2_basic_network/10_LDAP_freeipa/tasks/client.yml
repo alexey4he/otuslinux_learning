@@ -1,0 +1,9 @@
+---
+    - name: Install ipa-client packages
+      yum: 
+        name: freeipa-client
+        state: present
+      tags: ipaclient
+
+    - name: configure ipa-client and install
+      command: ipa-client-install --mkhomedir --domain=forotus.org --server=ipaserver.forotus.org --realm=FOROTUS.ORG -p admin --password=12345678 --hostname=ipaclient.forotus.org --unattende --force-ntpd --mkhomedir

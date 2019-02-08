@@ -1,0 +1,9 @@
+---
+  - name: reload firewalld
+    command: firewall-cmd --reload
+
+  - name: Start rngd service
+    systemd:
+      state: started
+      enabled: yes
+      name: rngd

@@ -1,0 +1,21 @@
+---
+    - name: Install ipa-server packages
+      yum: 
+        name: ['ipa-server', 'ipa-server-dns', 'bind', 'bind-dyndb-ldap']
+        state: present
+      tags: ipaserver
+      
+
+    - name: Install rngd
+      yum:
+        name: rng-tools
+        state: present
+      tags: 
+        - ipaserver
+        - rngd
+      notify: Start rngd service  
+
+
+    - name: Install ipa server
+      command: ipa-server-install -U --hostname=ipaserver.forotus.org -r FOROTUS.ORG -n forotus.org -p 12345678 -a 12345678 --setup-dns --no-forwarders --no-reverse --mkhomedir
+      tags: ipaserver

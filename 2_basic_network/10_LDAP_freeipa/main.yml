@@ -1,0 +1,23 @@
+---
+- name: Playbook to configure IPA server
+  hosts: all
+  become: true
+  tasks:
+    - include: tasks/hosts.yml
+    - include: tasks/firewalld.yml
+  handlers:
+    - include: handlers/main.yml
+  
+- name: Install freeipa server
+  hosts: ipaserver
+  become: true
+  tasks: 
+    - include: tasks/server.yml
+  handlers:
+    - include: handlers/main.yml
+
+- name: Install freeipa client
+  hosts: ipaclient
+  become: true
+  tasks: 
+    - include: tasks/client.yml
