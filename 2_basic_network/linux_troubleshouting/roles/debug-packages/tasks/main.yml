@@ -1,0 +1,13 @@
+---
+# tasks file for debug-packages
+- name: Install epel-release repo
+  yum:
+    name: epel-release
+    state: present
+  tags: debug-packages
+
+- name: Install necessary debug packages
+  yum:
+    name: ['lsof', 'sysstat', 'strace', 'atop']
+    state: present
+  tags: debug-packages

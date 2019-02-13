@@ -1,0 +1,6 @@
+---
+- hosts: otusClient
+  become: true
+  roles:
+#   - debug-packages
+    - kernel-tuned

@@ -1,0 +1,2 @@
+# Default sysctl.conf location
+sysctl_config_location: /etc/sysctl.conf
