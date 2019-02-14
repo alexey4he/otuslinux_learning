@@ -2,5 +2,5 @@
 - hosts: otusClient
   become: true
   roles:
-#   - debug-packages
+    - debug-packages
     - kernel-tuned

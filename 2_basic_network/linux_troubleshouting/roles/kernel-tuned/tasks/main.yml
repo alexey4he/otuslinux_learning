@@ -6,8 +6,7 @@
     dest: "{{ sysctl_config_location }}"
   notify:
     - Reload sysctl configuration
-  tags:
-    - sysctl_config
+
   
 - name: Add or modify nofile soft limit for all user
   pam_limits:
@@ -15,8 +14,7 @@
     limit_type: soft
     limit_item: nofile
     value: 100000
-  tags:
-  - sysctl_config
+
   
 - name: Add or modify nofile soft limit for all user
   pam_limits:
@@ -24,5 +22,3 @@
     limit_type: hard
     limit_item: nofile
     value: 100000
-  -tags: 
-  - sysctl_config
