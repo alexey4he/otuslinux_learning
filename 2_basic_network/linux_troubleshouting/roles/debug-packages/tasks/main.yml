@@ -4,7 +4,9 @@
   yum:
     name: epel-release
     state: present
-  tags: debug-packages
+  tags: 
+    - epel-release
+    - debug-packages
 
 - name: Install necessary debug packages
   yum:
