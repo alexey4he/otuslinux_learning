@@ -1,5 +1,5 @@
 ---
-- hosts: server
+- hosts: log
   become: true
   roles:
     - server
