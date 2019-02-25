@@ -1,0 +1,1 @@
+audit_rules: -w /etc/nginx/nginx.conf -p wa

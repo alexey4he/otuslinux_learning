@@ -1,0 +1,6 @@
+---
+# handlers file for server-rsyslog-conf
+
+
+- name: Restart auditd service
+  command: "service auditd restart"

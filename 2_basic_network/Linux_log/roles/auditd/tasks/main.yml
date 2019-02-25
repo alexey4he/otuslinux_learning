@@ -1,0 +1,24 @@
+---
+# tasks file for server-rsyslog-conf
+
+
+- name: add rules auditd control /etc/nginx/nginx.conf file
+  lineinfile:
+    dest: /etc/audit/rules.d/audit.rules
+    line:  "{{ audit_rules }}"
+
+- name: Configure plugins auditd send audit log to remote hosts
+  template: 
+    src: templates/syslog.conf.j2
+    dest: /etc/audisp/plugins.d/syslog.conf
+  
+- name: Configure auditd disable local log
+  lineinfile: 
+    path: /etc/audit/auditd.conf
+    regexp: 'write logs = yes'
+    line: 'write logs = no'
+    backrefs: yes
+  notify: Restart auditd service
+
+- name: Restart auditd service
+  command: "service auditd restart"

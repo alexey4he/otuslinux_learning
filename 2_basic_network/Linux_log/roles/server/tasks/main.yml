@@ -1,0 +1,9 @@
+---
+# tasks file for server-rsyslog-conf
+
+
+- name: Configure server rsyslog
+  template: 
+    src: rsyslog.conf.j2
+    dest: /etc/rsyslog.conf
+  notify: Restart rsyslog service

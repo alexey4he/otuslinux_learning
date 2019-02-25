@@ -12,13 +12,28 @@ $ModLoad imjournal # provides access to the systemd journal
 #$ModLoad immark  # provides --MARK-- message capability
 
 # Provides UDP syslog reception
-#$ModLoad imudp
-#$UDPServerRun 514
+$ModLoad imudp
+$UDPServerRun 514
 
 # Provides TCP syslog reception
-#$ModLoad imtcp
-#$InputTCPServerRun 514
+module(load="imtcp" MaxSessions="500")
+input(type="imtcp" port="514")
 
+
+
+#### Basic template ####
+
+$template DirHostLog,"/var/log/remote-hosts/%HOSTNAME%/%programname%.log"
+template(name="FileFormat" type="string"
+         string= "%TIMESTAMP% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg:::drop-last-lf%\n"
+        )
+:inputname, isequal, "imudp" ?DirHostLog;FileFormat
+
+$template DirHostAudit, "/var/log/remote-hosts/%HOSTNAME%/audit.log"
+template(name="auditFormat" type="string" string="%msg%\n")
+local6.*
+:inputname, isequal, "imudp" ?DirHostAudit;auditFormat
+& ~
 
 #### GLOBAL DIRECTIVES ####
 
@@ -72,9 +87,6 @@ uucp,news.crit                                          /var/log/spooler
 # Save boot messages also to boot.log
 local7.*                                                /var/log/boot.log
 
-*.crit /var/log/crit.log
-*.crit @192.168.11.10:514
-
 
 # ### begin forwarding rule ###
 # The statement between the begin ... end define a SINGLE forwarding
@@ -90,5 +102,5 @@ local7.*                                                /var/log/boot.log
 #$ActionQueueType LinkedList   # run asynchronously
 #$ActionResumeRetryCount -1    # infinite retries if host is down
 # remote host is: name/ip:port, e.g. 192.168.0.1:514, port optional
-*.* @192.168.11.10:514
+#*.* @@remote-host:514
 # ### end of the forwarding rule ###
