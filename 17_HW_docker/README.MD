@@ -39,6 +39,12 @@ STOPSIGNAL SIGTERM
 CMD ["nginx", "-g", "daemon off;"] # запустили nginx с pid 1
 
 ```
+Образ помещен в dockerhub и доступен по [ссылке](https://hub.docker.com/r/alexey4he/hwotusnginx)
+
+так же его можно сразу вызвать из консоли
+```
+docker pull alexey4he/hwotusnginx
+```
 
 # Теория:
 
