@@ -1,2 +1,20 @@
 ---
 # handlers file for percona-server
+- name: Add ignore table slave server 
+  blockinfile: 
+    path: /etc/my.cnf.d/05-binlog.cnf
+    block: |
+        replicate-ignore-table=bet.events_on_demand
+        replicate-ignore-table=bet.v_same_event
+  when: serverid != 1  
+
+- name: Read default pass for root user mysql
+  shell: "cat /var/log/mysqld.log | grep 'root@localhost:' | awk '{print $11}'"
+  register: temprootpass
+
+- name: update mysql root password 
+  mysql_user: 
+    login_user: root
+    login_password: '{{ temprootpass.stdout }}'
+    name: root
+    password: '{{ rootmysql }}'
