@@ -1,0 +1,26 @@
+---
+# tasks file for percona-server
+- name: add percona repository
+  yum: 
+    name: https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+    state: present
+
+- name: install percona server
+  yum:
+    name: Percona-Server-server-57
+    state: present
+
+- name: Copy base configuration percona server
+  template: 
+    src: '{{ item }}'
+    dest: /etc/my.cnf.d/{{ item | basename | regex_replace('\.j2','') }}
+  with_fileglob: 
+    - 'templates/*.j2'
+
+- name: Add ignore table slave server 
+  blockinfile: 
+    path: /etc/my.cnf.d/05-binlog.cnf
+    block: |
+        replicate-ignore-table=bet.events_on_demand
+        replicate-ignore-table=bet.v_same_event
+  when: serverid != 1  

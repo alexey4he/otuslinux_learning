@@ -1,0 +1,6 @@
+---
+- name: Conf and run master mysql server
+  hosts: all
+  become: true
+  roles:
+    - install-percona-server
