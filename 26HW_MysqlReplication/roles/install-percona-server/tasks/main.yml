@@ -7,7 +7,7 @@
 
 - name: install percona server
   yum:
-    name: Percona-Server-server-57
+    name: [ 'Percona-Server-server-57', 'MySQL-python.x86_64' ]
     state: present
 
 - name: Copy base configuration percona server
@@ -27,24 +27,3 @@
   notify: 
     - Read default pass for root user mysql
     - update mysql root password
-
-
-- name: Read default pass for root user mysql
-  shell: "cat /var/log/mysqld.log | grep 'root@localhost:' | awk '{print $11}'"
-  register: temprootpass
-
-- name: update mysql root password 
-  mysql: 
-    login_user: root
-    login_password: '{{ temprootpass.stdout }}'
-    name: root
-    password: '{{ rootmysql }}'
-
-
-- name: check default password
-  debug: 
-    msg: '{{ temprootpass.stdout }}'
-
-- name: check new password password
-  debug: 
-    msg: '{{ rootmysql }}'
