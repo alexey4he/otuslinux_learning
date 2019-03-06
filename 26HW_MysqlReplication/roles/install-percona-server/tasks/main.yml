@@ -17,7 +17,7 @@
   with_fileglob: 
     - 'templates/*.j2'
   notify: 
-    - Add ignore table slave server 
+    - Add table slave server 
 
 - name: start percona server for master-host
   systemd: 

@@ -1,6 +1,11 @@
 ---
-- name: Conf and run master mysql server
+- name: Basic configuration percona-mysql-server
   hosts: all
   become: true
   roles:
     - install-percona-server
+
+- name: Configure master
+  hosts: master
+  roles:
+    - master-mysql
