@@ -1,2 +1,16 @@
 ---
 # handlers file for master-mysql
+- name: Load dump bet.dmp to database "bet"
+  mysql_db: 
+
+    name: bet
+    state: import
+    target: /vagrant/bet.dmp
+
+- name: create dump for slave server
+  shell: 'mysqldump --all-databases --triggers --routines --master-data --ignore-table=bet.events_on_demand --ignore-table=bet.v_same_event > /home/vagrant/bet_for_slave.sql'
+
+- name: copy dump database to slave server
+  fetch: 
+    src: /home/vagrant/bet_for_slave.sql
+    dst: /home/vagrant/bet_for_slave.sql

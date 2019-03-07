@@ -9,3 +9,8 @@
   hosts: master
   roles:
     - master-mysql
+
+- name: Configure slave
+  hosts: slave
+  roles: 
+    - slave-mysql

@@ -2,27 +2,14 @@
 # tasks file for master-mysql
 - name: create database "bet"
   mysql_db:
-    login_user: root
-    login_password: "{{ rootmysql }}"
     name: bet
     state: present
+  notify: 
+    - Load dump bet.dmp to database "bet"
+    - create dump for slave server
 
-- name: Load dump bet.dmp to database "bet"
-  mysql_db: 
-    login_user: root
-    login_password: "{{ rootmysql }}"
-    name: bet
-    state: import
-    target: /vagrant/bet.dmp
 
-- name: create dump for slave server
-  mysql_db:
-    login_user: root
-    login_password: "{{ rootmysql }}"
-    state: dump
-    name: all
-    ignore_tables: "{{ item }}"
-    target: /home/vagrant/slave_bet.sql
-  with_items: 
-    - bet.events_on_demand
-    - bet.v_same_event
+- name: copy dump database to slave server
+  fetch: 
+    src: /home/vagrant/bet_for_slave.sql
+    dest: /tmp/fetched

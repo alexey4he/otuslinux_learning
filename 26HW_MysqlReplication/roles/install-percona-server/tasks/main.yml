@@ -15,9 +15,14 @@
     src: '{{ item }}'
     dest: /etc/my.cnf.d/{{ item | basename | regex_replace('\.j2','') }}
   with_fileglob: 
-    - 'templates/*.j2'
+    - 'templates/0*.j2'
   notify: 
     - Add table slave server 
+
+- name: Copy base configuration authorization for mysql vagrant user
+  template: 
+    src: templates/my.cnf.j2
+    dest: /home/vagrant/.my.cnf
 
 - name: start percona server for master-host
   systemd: 
