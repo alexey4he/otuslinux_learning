@@ -2,7 +2,7 @@
 # tasks file for percona-server
 - name: add percona repository
   yum: 
-    name: https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+    name: '{{ percona-repo }}'
     state: present
 
 - name: install percona server

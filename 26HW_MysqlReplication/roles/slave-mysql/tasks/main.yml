@@ -2,5 +2,11 @@
 # tasks file for slave-mysql
 - name: copy backup file
   copy:
-    src: "/tmp/fetched/master/home/vagrant/bet_for_slave.sql "
+    src: "/tmp/fetched/master/home/vagrant/bet_for_slave.sql"
     dest: "/home/vagrant/bet.sql"
+
+- name: restore mysqldump to slave server 
+  mysql_db:
+    name: bet
+    state: import
+    target: /home/vagrant/bet.sql

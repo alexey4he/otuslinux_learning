@@ -7,9 +7,4 @@
   notify: 
     - Load dump bet.dmp to database "bet"
     - create dump for slave server
-
-
-- name: copy dump database to slave server
-  fetch: 
-    src: /home/vagrant/bet_for_slave.sql
-    dest: /tmp/fetched
+    - fetch master dump
