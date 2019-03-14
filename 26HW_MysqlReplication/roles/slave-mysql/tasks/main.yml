@@ -1,12 +1,24 @@
 ---
-# tasks file for slave-mysql
-- name: copy backup file
-  copy:
-    src: "/tmp/fetched/master/home/vagrant/bet_for_slave.sql"
-    dest: "/home/vagrant/bet.sql"
+- name: Add ignore table for slave server
+  become: true
+  blockinfile: 
+    dest: /etc/my.cnf.d/05-binlog.cnf
+    block: |
+        replicate-ignore-table=bet.events_on_demand
+        replicate-ignore-table=bet.v_same_event
 
-- name: restore mysqldump to slave server 
-  mysql_db:
-    name: bet
-    state: import
-    target: /home/vagrant/bet.sql
+- name: Configure replication on the slave
+  become: false
+  mysql_replication: 
+    mode: changemaster
+    master_host: '192.168.11.150'
+    master_user: 'repl'
+    master_password: '!OtusLinux2018'
+    master_auto_position: '1'
+
+
+- name: Restart service mysql for slave server
+  become: true
+  systemd: 
+    name: mysql
+    state: restarted

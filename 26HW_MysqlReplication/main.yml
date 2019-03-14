@@ -3,7 +3,8 @@
   hosts: all
   become: true
   roles:
-    - basic config
+    - install-percona-server
+    
 - name: Configure master
   hosts: master
   roles:

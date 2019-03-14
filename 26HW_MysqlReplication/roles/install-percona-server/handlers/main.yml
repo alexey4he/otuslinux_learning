@@ -1,16 +1,15 @@
 ---
 # handlers file for percona-server
-- name: Add table slave server 
-  blockinfile: 
-    path: /etc/my.cnf.d/05-binlog.cnf
-    block: |
-        replicate-ignore-table=bet.events_on_demand
-        replicate-ignore-table=bet.v_same_event
-  when: serverid != 1  
-
 - name: Read default pass for root user mysql
   shell: "cat /var/log/mysqld.log | grep 'root@localhost:' | awk '{print $11}'"
   register: temprootpass
 
 - name: update mysql root password
   command: mysql --user root --password={{ temprootpass.stdout }} --connect-expired-password --execute="ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ rootmysql }}';"
+
+
+- name: create replication user
+  mysql_db: 
+    name: 'repl'
+    password: '!OtusLinux2018'
+    host: '%'

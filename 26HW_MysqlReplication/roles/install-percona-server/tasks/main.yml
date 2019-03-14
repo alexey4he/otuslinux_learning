@@ -2,12 +2,12 @@
 # tasks file for percona-server
 - name: add percona repository
   yum: 
-    name: '{{ percona-repo }}'
+    name: "{{ percona_repo }}"
     state: present
 
-- name: install percona server
+- name: install percona server and other necessary packages
   yum:
-    name: [ 'Percona-Server-server-57', 'MySQL-python.x86_64' ]
+    name: "{{ server_packages }}"
     state: present
 
 - name: Copy base configuration percona server
@@ -16,15 +16,13 @@
     dest: /etc/my.cnf.d/{{ item | basename | regex_replace('\.j2','') }}
   with_fileglob: 
     - 'templates/0*.j2'
-  notify: 
-    - Add table slave server 
 
 - name: Copy base configuration authorization for mysql vagrant user
   template: 
     src: templates/my.cnf.j2
     dest: /home/vagrant/.my.cnf
 
-- name: start percona server for master-host
+- name: start percona server
   systemd: 
     state: started
     name: mysql

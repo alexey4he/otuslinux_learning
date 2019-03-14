@@ -2,9 +2,15 @@
 # tasks file for master-mysql
 - name: create database "bet"
   mysql_db:
-    name: bet
+    name: 'bet'
     state: present
   notify: 
     - Load dump bet.dmp to database "bet"
-    - create dump for slave server
-    - fetch master dump
+
+- name: create replication user
+  mysql_user: 
+    name: 'repl'
+    host: '%'
+    password: '!OtusLinux2018'
+    priv: '*.*:REPLICATION SLAVE'
+    state: present

@@ -4,12 +4,4 @@
   mysql_db: 
     name: bet
     state: import
-    target: /vagrant/bet.dmp
-
-- name: create dump for slave server
-  shell: 'mysqldump --all-databases --triggers --routines --master-data --ignore-table=bet.events_on_demand --ignore-table=bet.v_same_event > /home/vagrant/bet_for_slave.sql'
-
-- name: fetch master dump 
-  fetch: 
-    src: /home/vagrant/bet_for_slave.sql
-    dest: /tmp/fetched
+    target: '{{ master_dump_dir }}'

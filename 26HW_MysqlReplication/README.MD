@@ -1,16 +1,41 @@
-```
-- name: create dump for slave server
-  mysql_db:
-    login_user: root
-    login_password: "{{ rootmysql }}"
-    state: dump
-    name: all
-    ignore_tables: "{{ item }}"
-    target: /home/vagrant/slave_bet.sql
-  with_items: 
-    - bet.events_on_demand
-    - bet.v_same_event
-```
+Домашнее задание
+
+# Mysql replication
+
+<details>
+<summary> Задачи: </summary> 
+
+развернуть дамп и настроить репликацию
+В материалах приложены ссылки на вагрант для репликации
+и дамп базы bet.dmp
+базу развернуть на мастере
+и настроить чтобы реплицировались таблицы
+| bookmaker |
+| competition |
+| market |
+| odds |
+| outcome
+
+* Настроить GTID репликацию
+
+</details>
+
+_____________________________________________
+
+# Выполнение
+
+Во время выполнения основная задача которую преследовал была не использовать *shell\command* в ансибле. 
+
+Структура ансибла в моем случае наверное очень далека от *best practies* 
+
+В отличии от нашей методички, я не делаю дамб базы **master**'a.
+Настроил мастер, настроил слейв. Запустил его, слейв сам слил все что необходимо. 
 
 
-```failed: [master] (item=bet.events_on_demand) => {"changed": false, "item": "bet.events_on_demand", "msg": "mysqldump: [Warning] Using a password on the command line interface can be insecure.\nWarning: A partial dump from a server that has GTIDs will by default include the GTIDs of all transactions, even those that changed suppressed parts of the database. If you don't want to restore GTIDs, pass --set-gtid-purged=OFF. To make a complete dump, pass --all-databases --triggers --routines --events. \nmysqldump: Got error: 1449: The user specified as a definer ('betscraper'@'%') does not exist when using LOCK TABLES\n"}```
+______
+
+pass от рута мастера:
+
+```
+7<Bhe@6zZXn
+```
