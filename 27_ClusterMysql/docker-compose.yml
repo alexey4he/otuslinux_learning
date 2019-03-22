@@ -1,0 +1,27 @@
+version: '3'
+services: 
+  mysqlnode1: 
+    env_file: auth.env
+    image: mysql/mysql-server:latest
+    ports:
+      - "3301:3306"
+
+  mysqlnode2:
+    env_file: auth.env
+    image: mysql/mysql-server:latest
+    ports: 
+      - "3302:3306"
+
+  mysqlnode3:
+    env_file: auth.env
+    image: mysql/mysql-server:latest
+    ports: 
+      - "3303:3306"
+
+  mysqlrouter:
+#
+    depends_on: 
+      - mysqlnode*
+    ports: 
+      - "6446:6446"
+
