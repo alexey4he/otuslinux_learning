@@ -1,27 +1,76 @@
 version: '3'
 services: 
-  mysqlnode1: 
-    env_file: auth.env
-    image: mysql/mysql-server:latest
+  mysqlnode1:
+    build:
+      context: server-image 
+    env_file: server.env
     ports:
       - "3301:3306"
+    command: ["mysqld",
+          "--server_id=1",
+          "--binlog_checksum=NONE",
+          "--gtid_mode=ON",
+          "--enforce_gtid_consistency=ON",
+          "--log_bin",
+          "--log_slave_updates=ON",
+          "--master_info_repository=TABLE",
+          "--relay_log_info_repository=TABLE",
+          "--transaction_write_set_extraction=XXHASH64",
+          "--user=mysql",
+          "--skip-host-cache",
+          "--skip-name-resolve", 
+          "--default_authentication_plugin=mysql_native_password"]
 
   mysqlnode2:
-    env_file: auth.env
-    image: mysql/mysql-server:latest
+    build:
+      context: server-image 
+    env_file: server.env
     ports: 
       - "3302:3306"
+    command: ["mysqld",
+          "--server_id=2",
+          "--binlog_checksum=NONE",
+          "--gtid_mode=ON",
+          "--enforce_gtid_consistency=ON",
+          "--log_bin",
+          "--log_slave_updates=ON",
+          "--master_info_repository=TABLE",
+          "--relay_log_info_repository=TABLE",
+          "--transaction_write_set_extraction=XXHASH64",
+          "--user=mysql",
+          "--skip-host-cache",
+          "--skip-name-resolve", 
+          "--default_authentication_plugin=mysql_native_password"]
 
   mysqlnode3:
-    env_file: auth.env
-    image: mysql/mysql-server:latest
+    build:
+     context: server-image 
+    env_file: server.env
     ports: 
       - "3303:3306"
+    command: ["mysqld",
+          "--server_id=3",
+          "--binlog_checksum=NONE",
+          "--gtid_mode=ON",
+          "--enforce_gtid_consistency=ON",
+          "--log_bin",
+          "--log_slave_updates=ON",
+          "--master_info_repository=TABLE",
+          "--relay_log_info_repository=TABLE",
+          "--transaction_write_set_extraction=XXHASH64",
+          "--user=mysql",
+          "--skip-host-cache",
+          "--skip-name-resolve", 
+          "--default_authentication_plugin=mysql_native_password"]
+
 
   mysqlrouter:
-#
+    env_file: router.env
+    image: mysql/mysql-router
     depends_on: 
-      - mysqlnode*
+      - mysqlnode1
+      - mysqlnode2
+      - mysqlnode3
     ports: 
       - "6446:6446"
 
