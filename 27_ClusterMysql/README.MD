@@ -15,6 +15,7 @@ ___
 ./button-init.sh  
 ```
 
+Подключаемся к нашему образу с *mysqlrouter* через который будем общаться с нашим кластером. 
 
 ```
 mysql -uclusteradmin -pclusterpass -P6446 -h 127.0.0.1
