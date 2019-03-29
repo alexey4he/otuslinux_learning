@@ -1,0 +1,6 @@
+---
+# handlers file for ntp-client
+- name: restart chronyd servise
+  systemd: 
+    state: restarted
+    name: chronyd

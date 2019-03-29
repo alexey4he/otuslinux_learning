@@ -1,0 +1,20 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Setup default time zone Moscow
+    file: 
+      src: /usr/share/zoneinfo/Europe/Moscow 
+      dest: /etc/localtime
+      state: link
+
+- hosts: server
+  become: true
+  roles: 
+    - ntp-server
+    - dns-server
+
+- hosts: client
+  become: true
+  roles:
+    - ntp-client

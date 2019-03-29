@@ -1,0 +1,9 @@
+---
+# tasks file for ntp-client
+
+- name: config chronyd synchronization time to server
+  template: 
+    src: chrony.conf.j2
+    dest: /etc/chrony.conf
+  notify: 
+    - restart chronyd servise

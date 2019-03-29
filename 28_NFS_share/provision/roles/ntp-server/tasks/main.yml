@@ -1,0 +1,8 @@
+---
+# tasks file for ntp-server
+- name: copy basic config ntp-server
+  copy: 
+    src: chrony.conf
+    dest: /etc/chrony.conf
+  notify: 
+    - restart chronyd servise

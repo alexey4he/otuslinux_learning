@@ -1,0 +1,5 @@
+---
+# defaults file for dns-server
+packages_list: 
+  - bind
+  - bind-utils

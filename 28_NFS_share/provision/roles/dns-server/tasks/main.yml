@@ -1,0 +1,10 @@
+---
+# tasks file for dns-server
+- name: install bind server
+  yum: 
+    name: '{{ packages_list }}'
+    state: present
+
+#- name: configure bind server
+- debug:
+    msg: "IPV4={{ ansible_eth1.ipv4.address }}"

@@ -1,0 +1,11 @@
+options {
+    // network
+        listen-on port 53 { '{{ ansible_eth1.ipv4.address }}' 127.0.0.1 };
+
+    // data
+        directory       "/var/named";
+        dump-file 	"/var/named/data/cache_dump.db";
+        statistics-file "/var/named/data/named_stats.txt";
+        memstatistics-file "/var/named/data/named_mem_stats.txt";
+
+}
