@@ -1,5 +1,4 @@
 ---
-# tasks file for dns-server
 - name: install bind server
   yum: 
     name: '{{ packages_list }}'
@@ -8,3 +7,24 @@
 #- name: configure bind server
 - debug:
     msg: "IPV4={{ ansible_eth1.ipv4.address }}"
+
+- name: Copy Default config dns server
+  template: 
+    src: named.conf.j2
+    dest: /etc/named.conf
+
+- name: My Domain Zone
+  template: 
+    src: db.otushw.ru.j2
+    dest: "/etc/named/db.otushw.ru"
+
+- name: My Domain Zone 2
+  template: 
+    src: db.rev_otushw.ru.j2
+    dest: "/etc/named/db.rev_otushw.ru"
+
+#- name: start bind service
+##  systemd:
+#    name: named.service
+#    enabled: yes
+#    state: started

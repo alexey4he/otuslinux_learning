@@ -1,0 +1,15 @@
+$TTL 3600
+$ORIGIN 11.168.192.in-addr.arpa.
+11.168.192.in-addr.arpa.  IN      SOA      ns.otushw.ru. root.otushw.ru. (
+                            0104201908 ; serial
+                            3600       ; refresh (1 hour)
+                            600        ; retry (10 minutes)
+                            86400      ; expire (1 day)
+                            600        ; minimum (10 minutes)
+                        )
+
+                IN      NS      ns.otushw.ru.
+
+; DNS Servers
+150              IN      PTR     server.otushw.ru.
+151              IN      PTR     client.otushw.ru.
