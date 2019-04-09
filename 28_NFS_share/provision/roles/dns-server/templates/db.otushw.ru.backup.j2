@@ -1,8 +1,7 @@
-; {{ ansible_managed }}
 $TTL 3600
-$ORIGIN {{ rev_domain }}.
-11.168.192.in-addr.arpa.  IN      SOA      ns.otushw.ru. root.otushw.ru. (
-                            0104201908 ; serial
+$ORIGIN otushw.ru.
+@               IN      SOA     ns.otushw.ru. root.otushw.ru. (
+                            0104201907 ; serial
                             3600       ; refresh (1 hour)
                             600        ; retry (10 minutes)
                             86400      ; expire (1 day)
@@ -12,5 +11,5 @@ $ORIGIN {{ rev_domain }}.
                 IN      NS      ns.otushw.ru.
 
 ; DNS Servers
-150              IN      PTR     server.otushw.ru.
-151              IN      PTR     client.otushw.ru.
+server            IN      A       192.168.11.150
+client            IN      A       192.168.11.151

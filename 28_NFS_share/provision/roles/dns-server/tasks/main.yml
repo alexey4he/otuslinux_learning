@@ -8,6 +8,9 @@
 - debug:
     msg: "IPV4={{ ansible_eth1.ipv4.address }}"
 
+- debug:
+    msg: "{{ inventory_hostname }}.otushw.ru"
+
 - name: Copy Default config dns server
   template: 
     src: named.conf.j2
@@ -17,6 +20,8 @@
   template: 
     src: db.otushw.ru.j2
     dest: "/etc/named/db.otushw.ru"
+  vars: 
+    all_servers: "{{ groups['all'] }}"
 
 - name: My Domain Zone 2
   template: 

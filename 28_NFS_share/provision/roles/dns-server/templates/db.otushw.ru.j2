@@ -1,15 +1,18 @@
+; {{ ansible_managed }}
 $TTL 3600
-$ORIGIN otushw.ru.
-@               IN      SOA     ns.otushw.ru. root.otushw.ru. (
-                            0104201907 ; serial
+$ORIGIN {{ domain }}.
+@               IN      SOA     ns.{{ domain }}. root.{{ domain }}. (
+                            {{ serial }} ; serial
                             3600       ; refresh (1 hour)
                             600        ; retry (10 minutes)
                             86400      ; expire (1 day)
                             600        ; minimum (10 minutes)
                         )
 
-                IN      NS      ns.otushw.ru.
+                IN      NS      ns.{{ domain }}.
 
 ; DNS Servers
-server            IN      A       192.168.11.150
-client            IN      A       192.168.11.151
+{% for item in all_servers  %}
+{{ hostvars[item]['inventory_hostname'] }}      IN      A       {{ hostvars[item]['ansible_eth1']['ipv4']['address'] }}
+{% endfor %}
+; {{ ansible_managed }}
