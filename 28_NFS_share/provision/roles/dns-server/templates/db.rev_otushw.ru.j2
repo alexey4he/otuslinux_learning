@@ -1,7 +1,7 @@
 ; {{ ansible_managed }}
 $TTL 3600
 $ORIGIN {{ rev_domain }}.
-11.168.192.in-addr.arpa.  IN      SOA      ns.otushw.ru. root.otushw.ru. (
+11.168.192.in-addr.arpa.  IN      SOA      ns.{{ domain }}. root.{{ domain }}. (
                             0104201908 ; serial
                             3600       ; refresh (1 hour)
                             600        ; retry (10 minutes)
@@ -9,8 +9,11 @@ $ORIGIN {{ rev_domain }}.
                             600        ; minimum (10 minutes)
                         )
 
-                IN      NS      ns.otushw.ru.
+                IN      NS      ns.{{ domain }}.
 
 ; DNS Servers
-150              IN      PTR     server.otushw.ru.
-151              IN      PTR     client.otushw.ru.
+{% for item in all_servers  %}
+{{ hostvars[item]['ansible_eth1']['ipv4']['address']|regex_replace('192.168.11.') }}          IN      PTR       {{ hostvars[item]['inventory_hostname'] }}.{{ domain }}.
+{% endfor %}
+
+; {{ ansible_managed }} off

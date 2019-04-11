@@ -4,32 +4,31 @@
     name: '{{ packages_list }}'
     state: present
 
-#- name: configure bind server
-- debug:
-    msg: "IPV4={{ ansible_eth1.ipv4.address }}"
-
-- debug:
-    msg: "{{ inventory_hostname }}.otushw.ru"
+- name: start bind service
+  systemd:
+    name: named
+    enabled: yes
+    state: started
 
 - name: Copy Default config dns server
   template: 
     src: named.conf.j2
     dest: /etc/named.conf
 
-- name: My Domain Zone
+- name: add otushw.ru zone dns server
   template: 
     src: db.otushw.ru.j2
     dest: "/etc/named/db.otushw.ru"
   vars: 
     all_servers: "{{ groups['all'] }}"
+  notify: 
+    - restart bind
 
-- name: My Domain Zone 2
+- name: add rev otushw.ru zone dns server
   template: 
     src: db.rev_otushw.ru.j2
     dest: "/etc/named/db.rev_otushw.ru"
-
-#- name: start bind service
-##  systemd:
-#    name: named.service
-#    enabled: yes
-#    state: started
+  vars: 
+    all_servers: "{{ groups['all'] }}"
+  notify: 
+    - restart bind

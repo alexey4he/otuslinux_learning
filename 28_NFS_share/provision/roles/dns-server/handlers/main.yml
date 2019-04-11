@@ -1,2 +1,7 @@
 ---
 # handlers file for dns-server
+- name: restart bind
+  systemd:
+    name: named
+    state: reloaded
+    enabled: yes
