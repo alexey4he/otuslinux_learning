@@ -5,3 +5,9 @@
     name: named
     state: reloaded
     enabled: yes
+
+- name: start bind service
+  systemd:
+    name: named
+    enabled: yes
+    state: started

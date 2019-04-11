@@ -1,7 +1,7 @@
 ; {{ ansible_managed }}
 $TTL 3600
 $ORIGIN {{ domain }}.
-@               IN      SOA     ns.{{ domain }}. root.{{ domain }}. (
+@               IN      SOA     server.{{ domain }}. root.{{ domain }}. (
                             {{ serial }} ; serial
                             3600       ; refresh (1 hour)
                             600        ; retry (10 minutes)
@@ -9,7 +9,7 @@ $ORIGIN {{ domain }}.
                             600        ; minimum (10 minutes)
                         )
 
-                IN      NS      ns.{{ domain }}.
+                IN      NS      server.{{ domain }}.
 
 ; DNS Servers
 {% for item in all_servers  %}

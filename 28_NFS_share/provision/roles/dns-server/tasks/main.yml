@@ -4,16 +4,11 @@
     name: '{{ packages_list }}'
     state: present
 
-- name: start bind service
-  systemd:
-    name: named
-    enabled: yes
-    state: started
-
 - name: Copy Default config dns server
   template: 
     src: named.conf.j2
     dest: /etc/named.conf
+  notify: start bind service
 
 - name: add otushw.ru zone dns server
   template: 

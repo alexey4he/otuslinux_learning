@@ -1,11 +1,11 @@
 options {
     // network
-        listen-on port 53 { '{{ ansible_eth1.ipv4.address }}'; 127.0.0.1; };
+        listen-on { {{ ansible_eth1.ipv4.address }} ; 127.0.0.1; };
         listen-on-v6 { none; };
         allow-query {192.168.11.0/24; localhost;};
-        recursion no;
+        allow-transfer { none; };
+        allow-recursion {192.168.11.0/24; localhost;};
         dnssec-enable yes;
-        dnssec-validation yes;
 
 
     // data
@@ -14,21 +14,16 @@ options {
         statistics-file "/var/named/data/named_stats.txt";
         memstatistics-file "/var/named/data/named_mem_stats.txt";
 
-    // servers
-        forwarders {
-            8.8.8.8;
-            8.8.4.4;
-        };
+    // forward
+        forwarders { 8.8.8.8; };
 };
 
 zone "otushw.ru" {
             type master;
-            file "/etc/named/db.otushw.ru";
-            allow-transfer { 127.0.0.1; };
+            file "/etc/named/db.{{ domain }}";
 };
 
 zone "11.168.192.in-addr.arpa" {
             type master;
-            file "/etc/named/db.rev_otushw.ru";
-            allow-transfer { 127.0.0.1; };
+            file "/etc/named/db.rev_{{ domain }}";
 };

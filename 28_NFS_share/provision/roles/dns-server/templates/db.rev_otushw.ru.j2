@@ -1,15 +1,15 @@
 ; {{ ansible_managed }}
 $TTL 3600
 $ORIGIN {{ rev_domain }}.
-11.168.192.in-addr.arpa.  IN      SOA      ns.{{ domain }}. root.{{ domain }}. (
-                            0104201908 ; serial
+11.168.192.in-addr.arpa.  IN      SOA      server.{{ domain }}. root.{{ domain }}. (
+                            {{ serial }} ; serial
                             3600       ; refresh (1 hour)
                             600        ; retry (10 minutes)
                             86400      ; expire (1 day)
                             600        ; minimum (10 minutes)
                         )
 
-                IN      NS      ns.{{ domain }}.
+                IN      NS      server.{{ domain }}.
 
 ; DNS Servers
 {% for item in all_servers  %}

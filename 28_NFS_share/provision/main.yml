@@ -13,8 +13,10 @@
   roles: 
     - ntp-server
     - dns-server
+    - dns-client
 
 - hosts: client
   become: true
   roles:
     - ntp-client
+    - dns-client

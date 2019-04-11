@@ -1,0 +1,15 @@
+---
+# tasks file for dns-client
+
+- name: Add custom dns for config eth1 interface
+  nmcli: 
+    conn_name: eth1
+    type: ethernet
+    dns4: "{{ hostvars['server']['ansible_eth1']['ipv4']['address'] }}"
+    state: present
+  notify: restart network
+
+
+#- name: test variables
+#  debug:
+#    msg: "{{ hostvars['server']['ansible_eth1']['ipv4']['address'] }}"

@@ -5,4 +5,4 @@ packages_list:
   - bind-utils
 domain: otushw.ru
 rev_domain: 11.168.192.in-addr.arpa
-serial: 0104201907
+serial: 1104201907
