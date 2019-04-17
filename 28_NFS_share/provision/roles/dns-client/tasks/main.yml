@@ -1,13 +1,30 @@
 ---
 # tasks file for dns-client
 
-- name: Add custom dns for config eth1 interface
-  nmcli: 
-    conn_name: eth1
-    type: ethernet
-    dns4: "{{ hostvars['server']['ansible_eth1']['ipv4']['address'] }}"
+- name: Add my custom dns
+  lineinfile:
+    path: /etc/NetworkManager/NetworkManager.conf
+    regexp: '#plugins=ifcfg-rh,ibft'
+    line: 'dns=none'
     state: present
-  notify: restart network
+  notify: 
+    - restart NetworkManager
+
+- name: config resolv.conf for in my custom dns 
+  template: 
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf
+  notify: 
+     - restart network
+
+
+# - name: Add custom dns for config eth1 interface
+#  nmcli: 
+#    conn_name: eth1
+#    type: ethernet
+#    dns4: "{{ hostvars['server']['ansible_eth1']['ipv4']['address'] }}"
+#    state: present
+#  notify: restart network
 
 
 #- name: test variables

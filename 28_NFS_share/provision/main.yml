@@ -14,6 +14,7 @@
     - ntp-server
     - dns-server
     - dns-client
+    - nfs-server
 
 - hosts: client
   become: true

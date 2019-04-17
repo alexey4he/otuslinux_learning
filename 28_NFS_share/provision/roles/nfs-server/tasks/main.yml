@@ -1,0 +1,21 @@
+---
+# tasks file for nfs-server
+
+- name: create new share folder
+  file:
+    path: /opt/otus-share
+    state: directory
+    mode: 0777
+
+#- name: create "upload" share
+#  path: "'{{ share_folder }}'/upload"
+#  state: directory
+#  mode: 0777
+
+- name: configure nfs-share folder
+  template: 
+    src: exports.j2
+    dest: /etc/exports
+  notify: 
+    - start nfs service
+  
