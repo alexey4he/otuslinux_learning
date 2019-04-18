@@ -1,0 +1,7 @@
+---
+# defaults file for dns-server
+open_service_firewalld: 
+  - nfs
+  - mountd
+  - ntp
+open_port_firewalld: '2049/udp'

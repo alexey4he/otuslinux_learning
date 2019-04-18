@@ -1,0 +1,31 @@
+---
+# tasks file for firewalld
+- name: start firewall-d service
+  systemd:
+    name: firewalld
+    state: started
+    enabled: yes
+
+
+#- name: add udp port
+#  firewalld:
+#    port: "{{ open_port_firewalld }}"
+#    permanent: yes
+##    state: enabled
+#    zone: public
+#  notify: 
+#    - restart firewalld
+
+- name: add service to public zone firewall
+  firewalld:
+    permanent: yes
+    state: enabled
+    zone: public
+    service: '{{ item }}'
+  with_items: 
+    - nfs
+    - mountd
+    - ntp
+    - dns
+  notify: 
+    - restart firewalld
