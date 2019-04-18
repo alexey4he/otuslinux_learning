@@ -1,0 +1,11 @@
+---
+# tasks file for nfs-client
+
+
+- name: mount share 
+  mount:
+    name: /mnt
+    src: server.otushw.ru:/opt/otus
+    opts: defaults,_netdev,vers=3
+    fstype: nfs
+    state: mounted

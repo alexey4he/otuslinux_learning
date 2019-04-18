@@ -3,14 +3,15 @@
 
 - name: create new share folder
   file:
-    path: /opt/otus-share
+    path: '{{ share_folder }}'
     state: directory
     mode: 0777
 
-#- name: create "upload" share
-#  path: "'{{ share_folder }}'/upload"
-#  state: directory
-#  mode: 0777
+- name: create upload share
+  file:
+    path: '{{ share_folder }}/uploads'
+    state: directory
+    mode: 0777
 
 - name: configure nfs-share folder
   template: 

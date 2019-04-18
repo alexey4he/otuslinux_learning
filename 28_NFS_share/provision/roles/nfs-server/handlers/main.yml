@@ -3,6 +3,6 @@
 - name: start nfs service
   systemd: 
     name: nfs
-    state: start
+    state: started
     enabled: yes
   

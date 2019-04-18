@@ -21,3 +21,4 @@
   roles:
     - ntp-client
     - dns-client
+    - nfs-client

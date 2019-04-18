@@ -1,2 +1,3 @@
 ---
 # defaults file for nfs-server
+share_folder: /opt/otus
