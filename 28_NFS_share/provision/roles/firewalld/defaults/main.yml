@@ -1,7 +1,9 @@
 ---
 # defaults file for dns-server
 open_service_firewalld: 
-  - nfs
-  - mountd
-  - ntp
+    - nfs
+    - mountd
+    - ntp
+    - dns
+    - rpc-bind
 open_port_firewalld: '2049/udp'

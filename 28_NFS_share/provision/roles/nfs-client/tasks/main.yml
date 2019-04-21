@@ -4,8 +4,8 @@
 
 - name: mount share 
   mount:
-    name: /mnt
     src: server.otushw.ru:/opt/otus
+    path: /mnt
     opts: defaults,_netdev,vers=3,proto=udp
     fstype: nfs
     state: mounted

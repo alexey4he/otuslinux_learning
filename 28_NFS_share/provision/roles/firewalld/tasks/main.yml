@@ -7,14 +7,14 @@
     enabled: yes
 
 
-#- name: add udp port
-#  firewalld:
-#    port: "{{ open_port_firewalld }}"
-#    permanent: yes
-##    state: enabled
-#    zone: public
-#  notify: 
-#    - restart firewalld
+- name: add udp port
+  firewalld:
+    port: "{{ open_port_firewalld }}"
+    permanent: yes
+    state: enabled
+    zone: public
+  notify: 
+    - restart firewalld
 
 - name: add service to public zone firewall
   firewalld:
@@ -27,5 +27,6 @@
     - mountd
     - ntp
     - dns
+    - rpc-bind
   notify: 
     - restart firewalld
