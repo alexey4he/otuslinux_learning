@@ -1,0 +1,13 @@
+---
+# tasks file for postfix-server
+- name: Install mail client packages
+  yum: 
+    name: mailx
+    state: present
+  
+- name: Copy basic config for the postfix postfix-server
+  template: 
+    src: main.cf.j2
+    dest: /etc/postfix/main.cf
+  notify: 
+    - restart postfix

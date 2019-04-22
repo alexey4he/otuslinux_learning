@@ -1,0 +1,64 @@
+---
+# tasks file for dovecot
+- name: Install dovecot
+  yum: 
+    name: dovecot
+    state: present
+
+- name: Start service dovecot
+  systemd: 
+    name: dovecot
+    state: started
+    enabled: true
+
+- name: Add support protocolt dovecot
+  lineinfile:
+    path: /etc/dovecot/dovecot.conf
+    regexp: '^#protocols = imap pop3 lmtp'
+    line: 'protocols = imap pop3 lmtp'
+    state: present 
+  notify: restart dovecot
+
+
+- name: Add list
+  lineinfile:
+    path: /etc/dovecot/dovecot.conf
+    regexp: '^#listen = *, ::'
+    line: 'listen = *'
+    state: present 
+  notify: restart dovecot
+
+- name: Authorization config client 
+  lineinfile:
+    path: /etc/dovecot/conf.d/10-auth.conf
+    regexp: '^#disable_plaintext_auth = yes'
+    line: 'disable_plaintext_auth = no'
+    state: present 
+  notify: restart dovecot
+
+- name: add login authentication authmechanisms
+  lineinfile:
+    path: /etc/dovecot/conf.d/10-auth.conf
+    regexp: '^auth_mechanisms = plain'
+    line: 'auth_mechanisms = plain login'
+    state: present 
+  notify: restart dovecot
+
+- name: add mail location 
+  lineinfile:
+    path: /etc/dovecot/conf.d/10-auth.conf
+    regexp: '^#mail_location = '
+    line: 'mail_location = maildir:~/Maildir'
+    state: present 
+  notify: restart dovecot
+
+- name: disable ssl for dovecot 
+  lineinfile:
+    path: /etc/dovecot/conf.d/10-ssl.conf
+    regexp: '^ssl = required'
+    line: 'ssl = no'
+    state: present 
+  notify: restart dovecot
+
+
+#- name: create folder for Otus user
