@@ -1,5 +1,11 @@
 ---
 # tasks file for postfix-server
+
+
+- name: change my hostname
+  hostname: 
+    name: "server.otushw.local"
+
 - name: Install mail client packages
   yum: 
     name: mailx

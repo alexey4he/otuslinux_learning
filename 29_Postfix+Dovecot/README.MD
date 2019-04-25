@@ -1,51 +1,44 @@
-# Файловые хранилища: NFS - share.
+# Почтовый сервер (Postfix + dovecot )
 
 <details>
 <summary> Задачи: </summary> 
 
-Vagrant stand NFS или SAMBA
-NFS или SAMBA на выбор:
+1. Установить в виртуалке postfix+dovecot для приёма почты на виртуальный домен любым обсужденным на семинаре способом
+2. Отправить почту телнетом с хоста на виртуалку
+3. Принять почту на хост почтовым клиентом
 
-vagrant up должен поднимать 2 виртуалки: сервер и клиент
-на сервер должна быть расшарена директория
-на клиента она должна автоматически монтироваться при старте (fstab или autofs)
-в шаре должна быть папка upload с правами на запись
-- требования для NFS: NFSv3 по UDP, включенный firewall
-
-* Настроить аутентификацию через KERBEROS
+Результат
+1. Полученное письмо со всеми заголовками
+2. Конфиги postfix и dovecot
 
 </details>
 
 # Выполнение 
 
-В этот раз посторался сделать роли которые могут мне пригодиться в будующем.
-
-В первую очередь, настраиваю на всех серверах time зону.
-По умолчанию в используемом мной дистрибутиве отключен firewalld, по условию задания я его включаю и разрешаю все необходимые сервисы для работы стенда. 
-
-<details>
-<summary>Есть вопрос:</summary>
-Сколько не пытался вынести список сервисов в переменную, и использовать ее в правиле вида: 
-
-``` - name: add service to public zone firewall
-  firewalld:
-    permanent: yes
-    state: enabled
-    zone: public
-    service: '{{ open_service_firewalld }}'
-  notify: 
-    - restart firewalld
-```
-
- Получал ошибку вида:
+Полученное письмо: 
 
 ```
-fatal: [server]: FAILED! => {"changed": false, "msg": "ERROR: Exception caught: org.fedoraproject.FirewallD1.Exception: INVALID_SERVICE: '['nfs', 'mountd', 'ntp', 'dns', 'rpc-bind']' not among existing services Permanent operation, Services are defined by port/tcp relationship and named as they are in /etc/services (on most systems)"}
+[root@server Maildir]# cat /home/mailuser/Maildir/new/1556192560.V801I6007478M613375.server.otushw.local 
+Return-Path: <alexey4he@otushw.local>
+X-Original-To: mailuser@otushw.local
+Delivered-To: mailuser@otushw.local
+Received: from localhost (localhost [IPv6:::1])
+        by server.otushw.local (Postfix) with SMTP id 3EF58B0FED
+        for <mailuser@otushw.local>; Thu, 25 Apr 2019 14:41:51 +0300 (MSK)
+subject: Hello Otus!
+Message-Id: <20190425114200.3EF58B0FED@server.otushw.local>
+Date: Thu, 25 Apr 2019 14:41:51 +0300 (MSK)
+From: alexey4he@otushw.local
+
+This is test messages, him create for telnet.
 ```
-в тоже время в том виде в котором это реализованно у [меня](provision/roles/firewalld/tasks/main.yml), все работает
-</details>
+___
 
-Дальше все довольно просто, ни каких особых вопросов не возникло, до момента провижина конфига на vagrant стенд. 
-Т.к. я генерирую прямую и обратную днс зону динамически, мне нужно было что бы провижин начался после того как оба узла поднимутся.
+Проверил работу dovecot через почтовый клиент: 
 
-Если не сложно, подскажите как по другому это можно было реализовать? 
+![Evolution messages](/29_Postfix+Dovecot/evolution.png)
+
+## Конфигурационный файлы postfix и dovecot: 
+_____
+1)  [Postfix](/29_Postfix+Dovecot/provision/roles/postfix-server/templates/main.cf.j2)
+2) [Dovecot](29_Postfix+Dovecot/provision/roles/dovecot/templates/dovecot.conf.j2)
